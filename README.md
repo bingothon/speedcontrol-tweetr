@@ -26,7 +26,7 @@ speedcontrol-tweetr is a bundle for NodeCG to allow users to schedule and post t
 ## Installation
 To install, navigate to your root NodeCG directory and run the following command.
 
-```nodecg install nicnacnic/speedcontrol-tweetr```
+```nodecg install bsgmarathon/speedcontrol-tweetr```
 
 After the installation completes, create a config file by running `nodecg defaultconfig speedcontrol-tweetr`.
 
@@ -47,17 +47,11 @@ If you would like your social media team to use Tweetr, but don't want them to b
 
 **Security note:** Anyone who has access to Tweetr by default has access to your entire NodeCG instance, as NodeCG does not have user-level permissions and only supports a simple yes/no authentication state (if login security is enabled). Securing your NodeCG production instance is outside the scope of this bundle, please see the [official documentation on Security & Authentication](https://www.nodecg.dev/docs/security/).
 
-## Commission Work
-Commission work is available! If you don't have any coding experience, or simply don't have time to develop, I can help bring your project or event to life. More information can be found by visiting my website at [https://www.nicnacnic.com/commission-work](https://www.nicnacnic.com/commission-work) or contacting me through Discord.
-
-## Other Bundles
-- [speedcontrol-layouts](https://github.com/nicnacnic/speedcontrol-layouts) A pack of simple yet easily customizable layouts, works very well with this bundle!
-- [obs-control](https://github.com/nicnacnic/obs-control) A NodeCG bundle to control an instance of OBS.
 
 ## Contributing
 There is a lot of inefficient code in this bundle. If you can optimize the code, or add new features, submit a pull request! Before you do, please make sure to **test your code**.
 
-Bugs or glitches should first be checked against the list of [known bugs](https://github.com/nicnacnic/obs-control/wiki), then by creating an issue in the [issue tracker](https://github.com/nicnacnic/obs-control/issues). Suggestions are always welcome!
+Bugs or glitches should first be checked against the list of [known bugs](https://github.com/bsgmarathon/speedcontrol-tweetr/wiki), then by creating an issue in the [issue tracker](https://github.com/bsgmarathon/speedcontrol-tweetr/issues). Suggestions are always welcome!
 
 If you're having issues or just want to chat, I can be reached on my [Discord](https://discord.gg/A34Qpfe) server.
 

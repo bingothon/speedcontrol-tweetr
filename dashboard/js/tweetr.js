@@ -8,29 +8,36 @@ const countdownTimer = nodecg.Replicant('countdownTimer')
 let buttonTimer;
 let firstLoad = true;
 
-NodeCG.waitForReplicants(runDataActiveRun, runDataArray, tweetData, selectedRunId).then(() => {
+NodeCG.waitForReplicants(runDataActiveRun, runDataArray, tweetData, selectedRunId, countdownTimer).then(() => {
+	const enableCb = document.getElementById('enableCb');
+
 	runDataArray.on('change', (newVal) => populateDropdown(newVal));
 	//runDataActiveRun.on('change', (newVal) => startCountdown(newVal));
 	selectedRunId.on('change', (newVal) => updateDropdown(newVal));
 	tweetData.on('change', () => updatePreview());
 
 	countdownTimer.on('change', (newVal) => {
-		if (newVal.countdownActive)
+		if (newVal.countdownActive){
 			updateCountdown(newVal);
-		else if (newVal.sendTweet)
+		} else if (newVal.sendTweet) {
 			sendTweet();
-		else if (newVal.cancelTweet)
+		} else if (newVal.cancelTweet) {
 			cancelTweet();
-	})
-})
+		}
+	});
 
-window.addEventListener('load', () => { 
-	updateDropdown(selectedRunId.value) 
-	if (countdownTimer.value.sendTweet)
+	enableCb.addEventListener('change', () => {
+		toggleEnabled(enableCb.hasAttribute('checked'));
+	});
+
+	updateDropdown(selectedRunId.value);
+
+	if (countdownTimer.value.sendTweet) {
 		sendTweet();
-	else if (countdownTimer.value.cancelTweet)
+	} else if (countdownTimer.value.cancelTweet) {
 		cancelTweet();
-})
+	}
+});
 
 function populateDropdown(data) {
 	let dropdownContent = document.getElementById("runList");
@@ -52,6 +59,10 @@ function updateCountdown(newVal) {
 }
 
 function updateSendTweet() {
+	if (!countdownTimer.value.enabled) {
+		return;
+	}
+
 	if (countdownTimer.value.sendTweet)
 		countdownTimer.value.sendTweet = false;
 	countdownTimer.value.countdownActive = false;
@@ -60,6 +71,10 @@ function updateSendTweet() {
 }
 
 function sendTweet() {
+	if (!countdownTimer.value.enabled) {
+		return;
+	}
+
 	let tweetButton = document.getElementById('sendTweet');
 	let cancelButton = document.getElementById('cancelTweet');
 	cancelButton.disabled = true;
@@ -89,6 +104,21 @@ function updateDropdown(runId) {
 		}
 	}
 	updatePreview();
+}
+
+function toggleEnabled(value) {
+	const tweetButton = document.getElementById('sendTweet');
+	const cancelButton = document.getElementById('cancelTweet');
+
+	countdownTimer.value.enabled = value;
+
+	if (value) {
+		cancelTweet()
+	} else {
+		tweetButton.disabled = true;
+		cancelButton.disabled = true;
+		countdownTimer.value.cancelTweet = true;
+	}
 }
 
 function updatePreview() {

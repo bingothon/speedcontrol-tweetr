@@ -6,7 +6,10 @@
         "apiKey": "",
         "apiSecret": "",
         "accessToken": "",
-        "accessTokenSecret": ""
+        "accessTokenSecret": "",
+		"obs": {
+			"gameLayout": "Game Layout"
+		}
     },
     "description": "The root schema comprises the entire JSON document.",
     "examples": [
@@ -23,11 +26,24 @@
         "apiKey",
         "apiSecret",
         "accessToken",
-        "accessTokenSecret"
+        "accessTokenSecret",
+		"obs"
     ],
     "title": "The root schema",
     "type": "object",
     "properties": {
+		"obs": {
+			"type": "object",
+			"properties": {
+				"gameLayout": {
+					"type": "string",
+					"default": "Game Layout"
+				}
+			},
+			"required": [
+				"gameLayout"
+			]
+		},
         "tweetDelay": {
             "$id": "#/properties/tweetDelay",
             "type": "integer",

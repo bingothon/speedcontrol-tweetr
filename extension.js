@@ -4,6 +4,7 @@ const fs = require('fs');
 const path = require('path');
 let buttonTimer;
 const speedcontrolBundle = 'nodecg-speedcontrol';
+const layoutsBundle = 'esa-layouts';
 
 module.exports = function (nodecg) {
 	const tweetData = nodecg.Replicant('tweetData', { defaultValue: {} })
@@ -13,7 +14,13 @@ module.exports = function (nodecg) {
 	const runFinishTimes = nodecg.Replicant('runFinishTimes', speedcontrolBundle);
 	const mediaData = nodecg.Replicant('assets:media')
 	const selectedRunId = nodecg.Replicant('selectedRunId');
-	const countdownTimer = nodecg.Replicant('countdownTimer', { persistent: false, defaultValue: { countdownActive: false, cancelTweet: false, sendTweet: false, countdown: -1 } })
+	const countdownTimer = nodecg.Replicant('countdownTimer', { persistent: false, defaultValue: { enabled: true, countdownActive: false, cancelTweet: false, sendTweet: false, countdown: -1 } })
+
+	nodecg.listenFor('obsChangeScene', layoutsBundle, ({ scene }) => {
+		if (scene === nodecg.bundleConfig.obs.gameLayout) {
+			startCountdown();
+		}
+	});
 
 	const twitterClient = new TwitterClient({
 		apiKey: nodecg.bundleConfig.apiKey,
@@ -35,13 +42,26 @@ module.exports = function (nodecg) {
 	}, 1000)
 
 	runDataArray.on('change', (newVal) => syncArrays(newVal, tweetData.value));
-	runDataActiveRun.on('change', (newVal) => startCountdown(newVal));
+	runDataActiveRun.on('change', (newVal) => {
+		if (!newVal) {
+			const runs = runDataArray.value;
+
+			if (runs.length) {
+				selectedRunId.value = runs[0].id;
+			}
+
+			return;
+		}
+
+		selectedRunId.value = newVal.id;
+	});
 	countdownTimer.on('change', (newVal) => {
-		if (newVal.sendTweet)
+		if (newVal.sendTweet) {
 			sendTweet();
-		else if (newVal.cancelTweet)
+		} else if (newVal.cancelTweet) {
 			cancelTweet();
-	})
+		}
+	});
 
 	function syncArrays(runArray, tweetArray) {
 		let updatedArray = {};
@@ -54,12 +74,9 @@ module.exports = function (nodecg) {
 		tweetData.value = updatedArray;
 	}
 
-	function startCountdown(run) {
+	function startCountdown() {
 		clearInterval(buttonTimer);
-		switch (run) {
-			case undefined: selectedRunId.value = runDataArray.value[0].id; break;
-			default: selectedRunId.value = run.id; break;
-		}
+
 		let time = parseFloat(nodecg.bundleConfig.tweetDelay / 1000);
 		countdownTimer.value = { countdownActive: true, cancelTweet: false, sendTweet: false, countdown: time }
 		buttonTimer = setInterval(() => {

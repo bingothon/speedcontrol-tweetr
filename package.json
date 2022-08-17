@@ -6,6 +6,9 @@
   "author": "nicnacnic",
   "url": "https://nicnacnic.com",
   "license": "MIT",
+  "scripts": {
+    "build": "rollup --config"
+  },
   "nodecg": {
     "bundleDependencies": {
       "nodecg-speedcontrol": "^2.4.0"
@@ -41,12 +44,14 @@
   },
   "dependencies": {
     "@polymer/paper-button": "^3.0.1",
+    "@polymer/paper-checkbox": "^3.1.0",
     "@polymer/paper-dropdown-menu": "^3.2.0",
     "@polymer/paper-input": "^3.2.1",
     "@polymer/paper-item": "^3.0.1",
     "@polymer/paper-listbox": "^3.0.1",
     "@polymer/paper-slider": "^3.0.1",
     "@polymer/paper-styles": "^3.0.1",
+    "@polymer/paper-toggle-button": "^3.0.1",
     "@polymer/polymer": "^3.4.1",
     "twitter-api-client": "^1.3.7",
     "twitter-media": "^0.2.0"

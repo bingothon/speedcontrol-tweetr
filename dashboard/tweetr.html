@@ -7,10 +7,9 @@
 	<link rel="stylesheet" href="css/tweetr.css" />
 	<script src="./js/modules.js"></script>
 	<script src="./js/tweetr.js"></script>
-	<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-	<link rel="preconnect" href="https://fonts.gstatic.com">
-	<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@700&display=swap" rel="stylesheet">
-	</script>
+	<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
+	<link rel="preconnect" href="https://fonts.gstatic.com" />
+	<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@700&display=swap" rel="stylesheet" />
 </head>
 
 <body>
@@ -21,6 +20,18 @@
 			</paper-listbox>
 		</paper-dropdown-menu>
 		<div class="buttonDiv">
+			<custom-style>
+				<style is="custom-style">
+					paper-checkbox {
+						--paper-checkbox-checked-color: var(--paper-green-500);
+						--paper-checkbox-unchecked-color: white;
+						--paper-checkbox-label-color: white;
+					}
+				</style>
+			</custom-style>
+
+
+			<paper-checkbox noink id="enableCb">Enabled</paper-checkbox>
 			<paper-button raised disabled class="button" id="sendTweet" onclick="updateSendTweet();">Tweet</paper-button>
 			<paper-button raised disabled class="button" id="cancelTweet" onclick="countdownTimer.value.cancelTweet = true;">Cancel</paper-button>
 			<paper-button raised class="button" class="nodecg-configure" nodecg-dialog="edit-tweet" id="editTweet"
