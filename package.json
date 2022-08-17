@@ -38,7 +38,17 @@
         "title": "",
         "width": 4,
         "file": "edit-tweet.html",
-        "dialog": true
+        "dialog": true,
+        "dialogButtons": [
+          {
+            "name": "save",
+            "type": "confirm"
+          },
+          {
+            "name": "cancel",
+            "type": "dismiss"
+          }
+        ]
       }
     ]
   },

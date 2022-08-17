@@ -1,20 +1,29 @@
 const TwitterClient = require('twitter-api-client').TwitterClient;
 const TwitterMedia = require('twitter-media');
 const fs = require('fs');
-const path = require('path');
+// const path = require('path');
 let buttonTimer;
 const speedcontrolBundle = 'nodecg-speedcontrol';
 const layoutsBundle = 'esa-layouts';
 
 module.exports = function (nodecg) {
-	const tweetData = nodecg.Replicant('tweetData', { defaultValue: {} })
+	const tweetData = nodecg.Replicant('tweetData', { defaultValue: {} });
 	const runDataActiveRun = nodecg.Replicant('runDataActiveRun', speedcontrolBundle);
 	const runDataArray = nodecg.Replicant('runDataArray', speedcontrolBundle);
-	const runDataActiveRunSurrounding = nodecg.Replicant('runDataActiveRunSurrounding', speedcontrolBundle)
+	const runDataActiveRunSurrounding = nodecg.Replicant('runDataActiveRunSurrounding', speedcontrolBundle);
 	const runFinishTimes = nodecg.Replicant('runFinishTimes', speedcontrolBundle);
-	const mediaData = nodecg.Replicant('assets:media')
+	// const mediaData = nodecg.Replicant('assets:media');
 	const selectedRunId = nodecg.Replicant('selectedRunId');
-	const countdownTimer = nodecg.Replicant('countdownTimer', { persistent: false, defaultValue: { enabled: true, countdownActive: false, cancelTweet: false, sendTweet: false, countdown: -1 } })
+	const countdownTimer = nodecg.Replicant('countdownTimer', {
+		persistent: false,
+		defaultValue: {
+			twEnabled: true,
+			countdownActive: false,
+			cancelTweet: false,
+			sendTweet: false,
+			countdown: -1
+		},
+	});
 
 	nodecg.listenFor('obsChangeScene', layoutsBundle, ({ scene }) => {
 		if (scene === nodecg.bundleConfig.obs.gameLayout) {
@@ -34,12 +43,12 @@ module.exports = function (nodecg) {
 		consumer_secret: nodecg.bundleConfig.apiSecret,
 		token: nodecg.bundleConfig.accessToken,
 		token_secret: nodecg.bundleConfig.accessTokenSecret,
-	})
+	});
 
 	setTimeout(() => {
 		clearInterval(buttonTimer);
-		countdownTimer.value = { countdownActive: false, cancelTweet: false, sendTweet: false, countdown: -1 }
-	}, 1000)
+		countdownTimer.value = { twEnabled: true, countdownActive: false, cancelTweet: false, sendTweet: false, countdown: -1 };
+	}, 1000);
 
 	runDataArray.on('change', (newVal) => syncArrays(newVal, tweetData.value));
 	runDataActiveRun.on('change', (newVal) => {
@@ -55,6 +64,7 @@ module.exports = function (nodecg) {
 
 		selectedRunId.value = newVal.id;
 	});
+
 	countdownTimer.on('change', (newVal) => {
 		if (newVal.sendTweet) {
 			sendTweet();
@@ -65,12 +75,15 @@ module.exports = function (nodecg) {
 
 	function syncArrays(runArray, tweetArray) {
 		let updatedArray = {};
+
 		runArray.forEach(run => {
-			if (tweetArray[run.id] === undefined)
+			if (tweetArray[run.id] === undefined) {
 				updatedArray[run.id] = { game: run.game, content: '', media: 'None' };
-			else if (tweetArray[run.id] !== undefined)
+			} else if (tweetArray[run.id] !== undefined) {
 				updatedArray[run.id] = tweetArray[run.id];
-		})
+			}
+		});
+
 		tweetData.value = updatedArray;
 	}
 
@@ -78,7 +91,7 @@ module.exports = function (nodecg) {
 		clearInterval(buttonTimer);
 
 		let time = parseFloat(nodecg.bundleConfig.tweetDelay / 1000);
-		countdownTimer.value = { countdownActive: true, cancelTweet: false, sendTweet: false, countdown: time }
+		countdownTimer.value = { countdownActive: true, cancelTweet: false, sendTweet: false, countdown: time };
 		buttonTimer = setInterval(() => {
 			time--;
 			countdownTimer.value.countdown = time;
@@ -87,24 +100,31 @@ module.exports = function (nodecg) {
 				countdownTimer.value.countdown = -1;
 				countdownTimer.value.sendTweet = true;
 			}
-		}, 1000)
+		}, 1000);
 	}
 
 	function sendTweet() {
 		clearInterval(buttonTimer);
 		let data = tweetData.value[selectedRunId.value];
-		if (data.content.includes('!lastRunTime'))
-			try { data.content = data.content.replace('!lastRunTime', runFinishTimes.value[runDataActiveRunSurrounding.value.previous].time) } catch { nodecg.log.warn('The last run either doesn\'t exist or doesn\'t have a final time.') }
-		if (data.media !== undefined && data.media !== 'None')
+		if (data.content.includes('!lastRunTime')) {
+			try {
+				data.content = data.content.replace('!lastRunTime', runFinishTimes.value[runDataActiveRunSurrounding.value.previous].time);
+			} catch {
+				nodecg.log.warn('The last run either doesn\'t exist or doesn\'t have a final time.');
+			}
+		}
+
+		if (data.media !== undefined && data.media !== 'None') {
 			uploadMedia('./assets/speedcontrol-tweetr/media/' + data.media, (mediaId) => {
 				twitterClient.tweets.statusesUpdate({ status: data.content, media_ids: mediaId }).catch(() => {
-					nodecg.log.warn('Error posting tweet. Your tweet is either blank, invalid, or a duplicate.')
+					nodecg.log.warn('Error posting tweet. Your tweet is either blank, invalid, or a duplicate.');
 				});
-			})
-		else
-			twitterClient.tweets.statusesUpdate({ status: data.content }).catch(() => {
-				nodecg.log.warn('Error posting tweet. Your tweet is either blank, invalid, or a duplicate.')
 			});
+		} else {
+			twitterClient.tweets.statusesUpdate({ status: data.content }).catch(() => {
+				nodecg.log.warn('Error posting tweet. Your tweet is either blank, invalid, or a duplicate.');
+			});
+		}
 	}
 
 	function cancelTweet() {
@@ -115,15 +135,24 @@ module.exports = function (nodecg) {
 
 	function uploadMedia(media, callback) {
 		try {
+			if (!fs.existsSync(media)) {
+				callback(undefined);
+				nodecg.log.warn(`No media with name "${media}" found.`);
+				return;
+			}
+
 			const promise = fs.promises.readFile(media);
 			Promise.resolve(promise).then((buffer) => {
-				if (media.includes('png') || media.includes('jpg') || media.includes('gif'))
-					twitterMedia.uploadMedia('image', buffer, (media, mediaId) => callback(mediaId))
-				else if (media.includes('mp4'))
-					twitterMedia.uploadMedia('video', buffer, (media, mediaId) => callback(mediaId))
-				else
-					nodecg.log.warn('Media upload failed! Please use a valid file format (png, jpg, gif, mp4)')
+				if (media.includes('png') || media.includes('jpg') || media.includes('gif')) {
+					twitterMedia.uploadMedia('image', buffer, (media, mediaId) => callback(mediaId));
+				} else if (media.includes('mp4')) {
+					twitterMedia.uploadMedia('video', buffer, (media, mediaId) => callback(mediaId));
+				} else {
+					nodecg.log.warn('Media upload failed! Please use a valid file format (png, jpg, gif, mp4)');
+				}
 			});
-		} catch { nodecg.log.warn('Media upload failed! Your file is too big, or there is an invalid filename. (Hint: Make sure to remove spaces in your filename!)') }
+		} catch {
+			nodecg.log.warn('Media upload failed! Your file is too big, or there is an invalid filename. (Hint: Make sure to remove spaces in your filename!)');
+		}
 	}
 }
