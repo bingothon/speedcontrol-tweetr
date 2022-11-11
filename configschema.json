@@ -7,6 +7,7 @@
         "apiSecret": "",
         "accessToken": "",
         "accessTokenSecret": "",
+		"useEsaLayouts": true,
 		"obs": {
 			"gameLayout": "Game Layout"
 		}
@@ -27,11 +28,23 @@
         "apiSecret",
         "accessToken",
         "accessTokenSecret",
+		"useEsaLayouts",
 		"obs"
     ],
     "title": "The root schema",
     "type": "object",
     "properties": {
+		"useEsaLayouts": {
+			"$id": "#/properties/useEsaLayouts",
+			"type": "boolean",
+			"title": "Use the esa layouts package for obs events",
+			"description": "Uses the esa-layouts package to listen for a scene change event instead of a run change from speedcontrol",
+			"default": true,
+			"examples": [
+				"true",
+				"false"
+			]
+		},
 		"obs": {
 			"type": "object",
 			"properties": {

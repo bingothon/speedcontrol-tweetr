@@ -88,8 +88,10 @@ function sendTweet() {
 }
 
 function cancelTweet() {
+	const enableCb = document.getElementById('enableCb');
 	let tweetButton = document.getElementById('sendTweet');
 	let cancelButton = document.getElementById('cancelTweet');
+	enableCb.disabled = false;
 	cancelButton.disabled = true;
 	tweetButton.innerHTML = 'Tweet';
 }

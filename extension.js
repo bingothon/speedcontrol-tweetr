@@ -25,11 +25,13 @@ module.exports = function (nodecg) {
 		},
 	});
 
-	nodecg.listenFor('obsChangeScene', layoutsBundle, ({ scene }) => {
-		if (scene === nodecg.bundleConfig.obs.gameLayout) {
-			startCountdown();
-		}
-	});
+	if (nodecg.bundleConfig.useEsaLayouts) {
+		nodecg.listenFor('obsChangeScene', layoutsBundle, ({ scene }) => {
+			if (scene === nodecg.bundleConfig.obs.gameLayout && countdownTimer.value.twEnabled) {
+				startCountdown();
+			}
+		});
+	}
 
 	const twitterClient = new TwitterClient({
 		apiKey: nodecg.bundleConfig.apiKey,
@@ -52,17 +54,23 @@ module.exports = function (nodecg) {
 
 	runDataArray.on('change', (newVal) => syncArrays(newVal, tweetData.value));
 	runDataActiveRun.on('change', (newVal) => {
-		if (!newVal) {
+		let newRunId = null;
+
+		if (newVal) {
+			newRunId = newVal.id;
+		} else {
 			const runs = runDataArray.value;
 
 			if (runs.length) {
-				selectedRunId.value = runs[0].id;
+				newRunId = runs[0].id;
 			}
-
-			return;
 		}
 
-		selectedRunId.value = newVal.id;
+		if (newRunId !== selectedRunId.value && countdownTimer.value.twEnabled) {
+			startCountdown();
+		}
+
+		selectedRunId.value = newRunId;
 	});
 
 	countdownTimer.on('change', (newVal) => {
@@ -91,7 +99,7 @@ module.exports = function (nodecg) {
 		clearInterval(buttonTimer);
 
 		let time = parseFloat(nodecg.bundleConfig.tweetDelay / 1000);
-		countdownTimer.value = { countdownActive: true, cancelTweet: false, sendTweet: false, countdown: time };
+		countdownTimer.value = { ...countdownTimer.value, countdownActive: true, cancelTweet: false, sendTweet: false, countdown: time };
 		buttonTimer = setInterval(() => {
 			time--;
 			countdownTimer.value.countdown = time;

@@ -1,5 +1,3 @@
-![image](https://user-images.githubusercontent.com/39160563/116319341-5b0c8180-a784-11eb-8310-82c17b0f3e63.png)
-
 # speedcontrol-tweetr
 Control Twitter right from your NodeCG dashboard!
 
@@ -18,10 +16,13 @@ speedcontrol-tweetr is a bundle for NodeCG to allow users to schedule and post t
 - Post tweets directly from the dashboard, without having to login to the website!
 - Schedule tweets based on the active run, or create new tweets and send them instantly
 - Include embedded images and videos in your tweets
+- Enable/disable checkbox
+- Intergration with esa-layouts
 
 ## Requirements
 - [NodeCG](https://github.com/nodecg/nodecg)
 - [NodeCG Speedcontrol](https://github.com/speedcontrol/nodecg-speedcontrol)
+
 
 ## Installation
 To install, navigate to your root NodeCG directory and run the following command.
@@ -30,7 +31,10 @@ To install, navigate to your root NodeCG directory and run the following command
 
 After the installation completes, create a config file by running `nodecg defaultconfig speedcontrol-tweetr`.
 
+**NOTE:** You most likely want to turn `useEsaLayouts` off in the config
+
 You will need to create a Twitter Developer account and get an API key/secret and an access token/secret to connect to Twitter.
+
 
 ## Usage
 Once the bundle is configured properly, usage is pretty simple. On first load, the bundle should automatically retrieve all runs and load them into the bundle. To edit tweets, simply select your game in the dropdown and press `Edit`. There is a 280 character limit. Make sure to save, then press anywhere outside of the dialog to exit.
