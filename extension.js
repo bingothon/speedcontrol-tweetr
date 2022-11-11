@@ -66,7 +66,7 @@ module.exports = function (nodecg) {
 			}
 		}
 
-		if (newRunId !== selectedRunId.value && countdownTimer.value.twEnabled) {
+		if (!nodecg.bundleConfig.useEsaLayouts && newRunId !== selectedRunId.value && countdownTimer.value.twEnabled) {
 			startCountdown();
 		}
 
