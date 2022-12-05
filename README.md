@@ -16,12 +16,14 @@ speedcontrol-tweetr is a bundle for NodeCG to allow users to schedule and post t
 - Post tweets directly from the dashboard, without having to login to the website!
 - Schedule tweets based on the active run, or create new tweets and send them instantly
 - Include embedded images and videos in your tweets
-- Enable/disable checkbox
-- Intergration with esa-layouts
+- Enable and disable auto tweeting
+- Integration with esa-layouts
+- Import and export tweets
 
 ## Requirements
 - [NodeCG](https://github.com/nodecg/nodecg)
 - [NodeCG Speedcontrol](https://github.com/speedcontrol/nodecg-speedcontrol)
+- [NodeCG Components](https://github.com/nicnacnic/nodecg-components)
 
 
 ## Installation
@@ -51,6 +53,16 @@ If you would like your social media team to use Tweetr, but don't want them to b
 
 **Security note:** Anyone who has access to Tweetr by default has access to your entire NodeCG instance, as NodeCG does not have user-level permissions and only supports a simple yes/no authentication state (if login security is enabled). Securing your NodeCG production instance is outside the scope of this bundle, please see the [official documentation on Security & Authentication](https://www.nodecg.dev/docs/security/).
 
+# Importing/Exporting Tweets
+To make life easier when you are trying to post many tweets at once, you can import a .csv file with your tweet data.
+
+1. Load all your runs into NodeCG.
+2. Export your tweets by pressing the **Export Tweets** button in the Settings tab in NodeCG.
+3. Load the .csv file into your favorite sheets software and edit away!
+
+When you're done, simply export your file as a .csv and import it back into Tweetr with the **Import Tweets** button. Make sure to not change any of the headers in the spreadsheet or it could cause errors!
+
+At the moment, media is not automatically uploaded, so make sure to manually upload all your media through the dashboard and select the appropriate file for each tweet.
 
 ## Contributing
 There is a lot of inefficient code in this bundle. If you can optimize the code, or add new features, submit a pull request! Before you do, please make sure to **test your code**.
