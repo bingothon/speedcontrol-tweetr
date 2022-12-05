@@ -103,7 +103,7 @@ module.exports = function (nodecg) {
 			if (time <= 0) {
 				sendTweet();
 			}
-		}, 1000)
+		}, 1000);
 	}
 
 	async function sendTweet() {
@@ -133,7 +133,7 @@ module.exports = function (nodecg) {
 
 	function cancelTweet() {
 		clearInterval(buttonTimer);
-		countdownTimer.value = { countdownActive: false, cancelTweet: true, sendTweet: false, countdown: null }
+		countdownTimer.value = { countdownActive: false, cancelTweet: true, sendTweet: false, countdown: null };
 	}
 
 	// function uploadMedia(media, callback) {
@@ -225,6 +225,6 @@ module.exports = function (nodecg) {
 			})
 		}
 
-		callback(null, Papa.unparse(array))
+		callback(null, Papa.unparse(array));
 	}
 }
