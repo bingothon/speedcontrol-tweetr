@@ -118,7 +118,7 @@ module.exports = function (nodecg) {
 		}
 
 		try {
-			if (data.media !== undefined && data.media !== 'None') {
+			if (data.media && data.media !== 'None') {
 				const mediaId = await twitterClient.v1.uploadMedia(`./assets/speedcontrol-tweetr/media/${data.media}`);
 
 				await twitterClient.v1.tweet(data.content, { media_ids: [mediaId] });
