@@ -35,7 +35,7 @@ After the installation completes, create a config file by running `nodecg defaul
 
 **NOTE:** You most likely want to turn `useEsaLayouts` off in the config
 
-You will need to create a Twitter Developer account and get an API key/secret and an access token/secret to connect to Twitter.
+You will need to create a Twitter Developer account and get an API key/secret and an access token/secret to connect to Twitter. Make sure you get enhanced access with read **and** write privileges to avoid any errors!
 
 
 ## Usage
@@ -43,7 +43,7 @@ Once the bundle is configured properly, usage is pretty simple. On first load, t
 
 For media, upload images and videos through NodeCG's asset tab, located in the top-right. To select the media you want to use for your tweet, open the dropdown and select your file. Supported formats are png, jpg, gif and mp4. Images can not be larger than 5 MB, GIF's 15 MB, and videos 512 MB. Make sure your filename does **not** have spaces or invalid characters, and your media is within the size limit, or it will cause your NodeCG instance to crash.
 
-To enable Auto Tweet, set `autoTweet` to true in the config. `tweetDelay` specifies how long you have to cancel the tweet, 30 seconds is recommended. Once you switch runs, the button will show a countdown, you can either cancel the tweet (you can always tweet it later!), or wait for the countdown to finish, then the tweet will be sent.
+To enable Auto Tweet, press the button in the Settings tab of the NodeCG dashboard. Countdown time specifies how long you have to cancel the tweet, 60 seconds is recommended. Once you switch runs, the button will show a countdown, you can either cancel the tweet (you can always tweet it later!), or wait for the countdown to finish, then the tweet will be sent.
 
 The text box at the bottom is for when you want to quickly compose and post a tweet without attaching it to a run. The limits to character count and media size still apply here as well.
 
@@ -74,7 +74,7 @@ If you're having issues or just want to chat, I can be reached on my [Discord](h
 ## License
 MIT  License
 
-Copyright (c) 2021 nicnacnic
+Copyright (c) 2022 nicnacnic
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

@@ -46,6 +46,12 @@ module.exports = function (nodecg) {
 		countdownTimer.value = { countdownActive: false, cancelTweet: false, sendTweet: false, countdown: -1 };
 	}, 1000);
 
+	selectedRunId.on('change', (newVal) => {
+		if (countdownTimer.value.countdownActive) {
+			countdownTimer.value.cancelTweet = true;
+		}
+	});
+
 	nodecg.listenFor('sendTweet', () => sendTweet());
 	nodecg.listenFor('cancelTweet', () => cancelTweet());
 	nodecg.listenFor('exportCSV', (value, callback) => createCSV(callback));
@@ -85,8 +91,8 @@ module.exports = function (nodecg) {
 
 		runArray.forEach(run => {
 			if (tweetArray[run.id] === undefined) {
-				updatedArray[run.id] = { game: run.game, content: '', media: 'None' };
-			} else if (tweetArray[run.id] !== undefined) {
+				updatedArray[run.id] = { game: run.game, category: run.category, content: '', media: null };
+			} else {
 				updatedArray[run.id] = tweetArray[run.id];
 			}
 		});
@@ -136,9 +142,22 @@ module.exports = function (nodecg) {
 
 	function cancelTweet() {
 		clearInterval(buttonTimer);
-		countdownTimer.value.countdownActive = false;
-		countdownTimer.value.countdown = -1;
+		countdownTimer.value = { countdownActive: false, cancelTweet: false, sendTweet: false, countdown: null }
 	}
+
+	// function uploadMedia(media, callback) {
+	// 	try {
+	// 		const promise = fs.promises.readFile(media);
+	// 		Promise.resolve(promise).then((buffer) => {
+	// 			if (media.includes('png') || media.includes('jpg') || media.includes('gif') || media.includes('jpeg') || media.includes('webp'))
+	// 				twitterMedia.uploadMedia('image', buffer, (media, mediaId) => callback(mediaId))
+	// 			else if (media.includes('mp4'))
+	// 				twitterMedia.uploadMedia('video', buffer, (media, mediaId) => callback(mediaId))
+	// 			else
+	// 				nodecg.log.warn('Media upload failed! Please use a valid file format (png, jpg, gif, mp4)')
+	// 		});
+	// 	} catch (e) { nodecg.log.warn('Media upload failed! Your file is too big, or there is an invalid filename. (Hint: Make sure to remove spaces in your filename!)'); console.log(e) }
+	// }
 
 	async function importCSV(value, callback) {
 		let data = Papa.parse(value).data;
