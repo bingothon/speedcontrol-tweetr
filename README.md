@@ -19,6 +19,7 @@ speedcontrol-tweetr is a bundle for NodeCG to allow users to schedule and post t
 - Enable and disable auto tweeting
 - Integration with esa-layouts
 - Import and export tweets
+- Uses built-in dialog buttons
 
 ## Requirements
 - [NodeCG](https://github.com/nodecg/nodecg)

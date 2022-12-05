@@ -14,7 +14,6 @@ module.exports = function (nodecg) {
 	const runFinishTimes = nodecg.Replicant('runFinishTimes', speedcontrolBundle);
 	// const mediaData = nodecg.Replicant('assets:media');
 	const selectedRunId = nodecg.Replicant('selectedRunId');
-	// TODO: how is the database structured?
 	const settings = nodecg.Replicant('settings', { defaultValue: { autoTweet: false, countdown: 60 } });
 	const countdownTimer = nodecg.Replicant('countdownTimer', {
 		persistent: false,
@@ -78,14 +77,6 @@ module.exports = function (nodecg) {
 		selectedRunId.value = newRunId;
 	});
 
-	countdownTimer.on('change', (newVal) => {
-		if (newVal.sendTweet) {
-			sendTweet();
-		} else if (newVal.cancelTweet) {
-			cancelTweet();
-		}
-	});
-
 	function syncArrays(runArray, tweetArray) {
 		let updatedArray = {};
 
@@ -135,14 +126,14 @@ module.exports = function (nodecg) {
 				await twitterClient.v1.tweet(data.content);
 			}
 		} catch (e) {
-			const run = runDataArray.value[selectedRunId.value];
+			const run = runDataArray.value.find((r) => r.id === selectedRunId.value) || { game: `missingno`, category: '' };
 			nodecg.log.warn(`Error posting tweet. Your tweet is either blank, invalid, or a duplicate. Run: ${run.game} ${run.category}`);
 		}
 	}
 
 	function cancelTweet() {
 		clearInterval(buttonTimer);
-		countdownTimer.value = { countdownActive: false, cancelTweet: false, sendTweet: false, countdown: null }
+		countdownTimer.value = { countdownActive: false, cancelTweet: true, sendTweet: false, countdown: null }
 	}
 
 	// function uploadMedia(media, callback) {

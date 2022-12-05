@@ -8,7 +8,22 @@
     <script defer src="/components/input/input.js"></script>
     <script defer src="/components/select/select.js"></script>
     <script defer src="/components/textarea/textarea.js"></script>
-    </script>
+	<style>
+		nodecg-textarea {
+			margin-bottom: 20px;
+		}
+
+		.buttonDiv {
+			display: flex;
+			gap: 15px;
+			margin: 15px 0;
+		}
+
+		#cancelTweet .cancel {
+			--nodecg-button-background-color: #990000;
+			--nodecg-button-hover-background-color: darkred;
+		}
+	</style>
 </head>
 
 <body>
@@ -20,22 +35,6 @@
     </div>
     <nodecg-textarea disabled id="contentPreview" rows="6" label="Tweet Preview"></nodecg-textarea>
     <nodecg-input disabled label="Media" id="media"></nodecg-input>
-    <style>
-        nodecg-textarea {
-            margin-bottom: 20px;
-        }
-
-        .buttonDiv {
-            display: flex;
-            gap: 15px;
-            margin: 15px 0;
-        }
-
-        #cancelTweet .cancel {
-            --nodecg-button-background-color: #990000;
-            --nodecg-button-hover-background-color: darkred;
-        }
-    </style>
     <script>
         const speedcontrolBundle = 'nodecg-speedcontrol';
         const runDataArray = nodecg.Replicant('runDataArray', speedcontrolBundle);
