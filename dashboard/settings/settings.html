@@ -25,7 +25,7 @@
 <body>
     <nodecg-button id="autotweet" onClick="settings.value.autoTweet = !settings.value.autoTweet"></nodecg-button>
     <nodecg-input type="number" id="countdown" label="Countdown Time" onChange="settings.value.countdown = this.value"></nodecg-input>
-    <nodecg-button id="import" onClick="document.getElementById('importInput').click()">import Tweets</nodecg-button>
+    <nodecg-button id="import" onClick="document.getElementById('importInput').click()">Import Tweets</nodecg-button>
     <nodecg-button id="export" onClick="exportCSV();">Export Tweets</nodecg-button>
     <input type="file" accept=".csv" id="importInput" onChange="importCSV(this)"/>
 

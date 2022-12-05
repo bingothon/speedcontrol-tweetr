@@ -203,8 +203,14 @@ module.exports = function (nodecg) {
 			// 	})
 			// 	console.log(uploadData)
 			// }
-			tweetData.value[data[i][0]] = { game: data[i][1], category: data[i][2], content: data[i][4], media: (!mediaName) ? mediaName : null };
+			tweetData.value[data[i][0]] = {
+				game: data[i][1],
+				category: data[i][2],
+				content: data[i][4],
+				media: mediaName || null
+			};
 		}
+
 		callback(null);
 	}
 
@@ -222,11 +228,12 @@ module.exports = function (nodecg) {
 				ID: run,
 				Game: runData.game,
 				Category: runData.category,
-				"Runner(s)": runners.join(', '),
-				"Tweet Content": tweetData.value[run].content,
+				'Runner(s)': runners.join(', '),
+				'Tweet Content': tweetData.value[run].content,
 				Media: (tweetData.value[run].media === 'None') ? '' : tweetData.value[run].media,
 			})
 		}
+
 		callback(null, Papa.unparse(array))
 	}
 }
