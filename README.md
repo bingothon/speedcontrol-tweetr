@@ -31,6 +31,8 @@ To install, navigate to your root NodeCG directory and run the following command
 
 ```nodecg install bsgmarathon/speedcontrol-tweetr```
 
+Also make sure to navigate to the `speedcontrol-tweetr` directory and run `npm install --production` to install all the required dependencies.
+
 After the installation completes, create a config file by running `nodecg defaultconfig speedcontrol-tweetr`.
 
 **NOTE:** You most likely want to turn `useEsaLayouts` off in the config
