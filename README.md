@@ -12,6 +12,9 @@ Control Twitter right from your NodeCG dashboard!
 
 speedcontrol-tweetr is a bundle for NodeCG to allow users to schedule and post tweets without actually logging into the website. This bundle is meant for speedrunning marathons, therefore it includes all the features one might need to pull off an online marathon. Gone are the days where you need to use Tweetdeck or manually schedule tweets for your marathon!
 
+### Modifications
+This version of tweetr is different from [Nic's version](https://github.com/nicnacnic/speedcontrol-tweetr). The main difference is that it is written in typescript and is built on top of zonton's template
+
 ### Features
 - Post tweets directly from the dashboard, without having to login to the website!
 - Schedule tweets based on the active run, or create new tweets and send them instantly
@@ -20,6 +23,7 @@ speedcontrol-tweetr is a bundle for NodeCG to allow users to schedule and post t
 - Integration with esa-layouts
 - Import and export tweets
 - Uses built-in dialog buttons
+- Base on the [Vue template](https://github.com/zoton2/nodecg-vue-ts-template)
 
 ## Requirements
 - [NodeCG](https://github.com/nodecg/nodecg)
