@@ -13,8 +13,8 @@ useHead({ title: 'example' });
 // Helper composable to make accessing/modifying replicants easier.
 // For more information see https://github.com/Dan-Shields/nodecg-vue-composable
 const exampleReplicant = useReplicant<ExampleReplicant>(
-	'exampleReplicant',
-	'nodecg-vue-ts-template',
+  'exampleReplicant',
+  'tweetr',
 );
 
 // Access the bundle configuration with types.
@@ -25,11 +25,13 @@ const exampleType: ExampleType = { exampleProperty: 'exampleString' };
 </script>
 
 <template>
-	<div>
-		{{ text }}
-		<br><br>
-		<img src="./image.png" :style="{ width: '100%' }">
-		<br><br>
-		<QBtn color="primary" label="Example" />
-	</div>
+  <div>
+    {{ text }}
+    <br><br>
+    <img src="./image.png" :style="{ width: '100%' }">
+    <br><br>
+    <v-btn>
+      Button
+    </v-btn>
+  </div>
 </template>

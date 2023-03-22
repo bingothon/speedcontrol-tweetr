@@ -1,10 +1,10 @@
-import { quasar, transformAssetUrls } from '@quasar/vite-plugin';
 import vue from '@vitejs/plugin-vue';
 import { dirname } from 'path';
 import { fileURLToPath } from 'url';
 import { defineConfig } from 'vite';
 import checker from 'vite-plugin-checker';
 import NodeCGPlugin from 'vite-plugin-nodecg';
+import vuetify, { transformAssetUrls } from 'vite-plugin-vuetify';
 
 // Getting __dirname with ES Modules.
 const __filename = fileURLToPath(import.meta.url);
@@ -17,7 +17,7 @@ export default defineConfig({
 	},
 	plugins: [
 		vue({ template: { transformAssetUrls } }),
-		quasar({ autoImportComponentCase: 'pascal' }),
+		vuetify({ autoImport: true }),
 		checker({ vueTsc: { tsconfigPath: 'tsconfig.browser.json' } }),
 		NodeCGPlugin(),
 	],

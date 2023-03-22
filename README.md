@@ -16,6 +16,7 @@ speedcontrol-tweetr is a bundle for NodeCG to allow users to schedule and post t
 This version of tweetr is different from [Nic's version](https://github.com/nicnacnic/speedcontrol-tweetr). The main difference is that it is written in typescript and is built on top of zonton's template
 
 ### Features
+- Does not require nodecg-components to be installed
 - Post tweets directly from the dashboard, without having to login to the website!
 - Schedule tweets based on the active run, or create new tweets and send them instantly
 - Include embedded images and videos in your tweets
@@ -28,7 +29,6 @@ This version of tweetr is different from [Nic's version](https://github.com/nicn
 ## Requirements
 - [NodeCG](https://github.com/nodecg/nodecg)
 - [NodeCG Speedcontrol](https://github.com/speedcontrol/nodecg-speedcontrol)
-- [NodeCG Components](https://github.com/nicnacnic/nodecg-components)
 
 
 ## Installation

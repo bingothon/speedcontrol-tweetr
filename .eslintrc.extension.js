@@ -29,6 +29,7 @@ module.exports = {
 		'import/extensions': ['.js', '.jsx', '.ts', '.tsx'],
 	},
 	rules: {
+		semi: ['error', 'always'],
 		'@typescript-eslint/lines-between-class-members': 'off',
 		// max-len set to ignore "import" lines (as they usually get long and messy).
 		'max-len': ['error', { code: 100, ignorePattern: '^import\\s.+\\sfrom\\s.+;' }],
