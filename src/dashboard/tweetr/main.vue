@@ -21,23 +21,23 @@ export default defineComponent({
 <template>
   <v-app>
     <v-container>
-		<v-select
-			v-model="selectedRunId.data"
-			label="Run"
-			item-value="id"
-			item-title="game"
-			:items="runDataArray.data"
-		>
-			<template #item="{ props, item }" >
-				<v-list-item v-bind="props" title="">
-					{{ item.raw.game }}, {{ item.raw.category }}
-				</v-list-item>
-			</template>
-			<template v-slot:selection="{ item }">
-				<span>{{ item.raw.game }}, {{ item.raw.category }}</span>
-			</template>
-		</v-select>
-		<p>{{ selectedRunId.data }}</p>
-	</v-container>
+      <v-select
+        v-model="selectedRunId.data"
+        label="Run"
+        item-value="id"
+        item-title="game"
+        :items="runDataArray.data"
+      >
+        <template #item="{ props, item }">
+          <v-list-item v-bind="props" title="">
+            {{ item.raw.game }}, {{ item.raw.category }}
+          </v-list-item>
+        </template>
+        <template v-slot:selection="{ item }">
+          <span>{{ item.raw.game }}, {{ item.raw.category }}</span>
+        </template>
+      </v-select>
+      <p>{{ selectedRunId.data }}</p>
+    </v-container>
   </v-app>
 </template>
