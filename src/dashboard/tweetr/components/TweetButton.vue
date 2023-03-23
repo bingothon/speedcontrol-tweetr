@@ -14,11 +14,11 @@ export default defineComponent({
 </script>
 
 <template>
-  <v-btn color="error" disabled v-if="countdownTimer.countdownActive">
+  <v-btn block disabled v-if="countdownTimer.countdownActive">
     Tweeting in {{ countdownTimer.countdown }}s
   </v-btn>
-  <v-btn v-else-if="countdownTimer.sendTweet" disabled>
+  <v-btn block v-else-if="countdownTimer.sendTweet" disabled>
     Tweet Sent
   </v-btn>
-  <v-btn v-else @click="$emit('tweetNow')">Tweet</v-btn>
+  <v-btn block v-else @click="$emit('tweetNow')">Tweet</v-btn>
 </template>

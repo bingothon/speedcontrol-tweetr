@@ -14,8 +14,15 @@ export default defineComponent({
 </script>
 
 <template>
-  <v-btn color="error" @click="$emit('cancelClicked')" v-if="countdownTimer.countdownActive">
+  <v-btn block
+         color="red-darken-4"
+         @click="$emit('cancelClicked')"
+         :disabled="countdownTimer.sendTweet"
+         v-if="countdownTimer.countdownActive || countdownTimer.sendTweet"
+  >
     Cancel
   </v-btn>
-  <v-btn v-else @click="$emit('editClicked')" :disabled="countdownTimer.sendTweet">Edit</v-btn>
+  <v-btn block v-else @click="$emit('editClicked')">
+    Edit
+  </v-btn>
 </template>

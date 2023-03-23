@@ -20,6 +20,7 @@ It also has some additional features like tweeting once the transition to the ga
 
 ### Features
 - Does not require nodecg-components to be installed
+- NO MORE POLYMER!
 - Post tweets directly from the dashboard, without having to login to the website!
 - Schedule tweets based on the active run, or create new tweets and send them instantly
 - Include embedded images and videos in your tweets

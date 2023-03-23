@@ -1,7 +1,7 @@
 import { get as nodecg } from '@tweetr/util/nodecg';
 import { Configschema, TweetData } from '@tweetr/types/schemas';
 import {
-  countdownTimer,
+  countdownTimer, runDataActiveRun,
   runDataActiveRunSurrounding,
   runDataArray, runFinishTimes,
   selectedRunId,
@@ -10,7 +10,6 @@ import {
 } from '@tweetr/util/replicants';
 import { layoutsBundle } from '@tweetr/util/bundles';
 import { RunData } from 'speedcontrol-util/types';
-import { TwitterApi } from 'twitter-api-v2';
 import { SendTweetV1Params } from 'twitter-api-v2/dist/types';
 import { ListenForCb } from 'nodecg-types/types/lib/nodecg-instance';
 import ITwitterClient from '@tweetr/twitter/ITwitterClient';
@@ -21,8 +20,6 @@ import Papa from 'papaparse';
 let buttonTimer: NodeJS.Timer | undefined;
 
 const config = nodecg().bundleConfig as Configschema;
-
-// TODO: Dummy client
 const twitterClient: ITwitterClient = config.useDummyTwitterClient
   ? new DummyTwitterClient() : new TwitterApiClient(config);
 
@@ -39,6 +36,11 @@ setTimeout(() => {
 async function sendTweet(): Promise<void> {
   clearInterval(buttonTimer);
   const data = tweetData.value[selectedRunId.value];
+
+  if (!data.content) {
+    nodecg().log.warn(`Skipping tweet for "${data.game}, ${data.category}" due to missing content`);
+    return;
+  }
 
   if (data.content.includes('!lastRunTime')) {
     const prev = runDataActiveRunSurrounding.value.previous;
@@ -67,6 +69,12 @@ async function sendTweet(): Promise<void> {
     }
 
     await twitterClient.tweet(data.content, payloadObj);
+
+    countdownTimer.value = {
+      ...countdownTimer.value,
+      countdownActive: false,
+      sendTweet: true,
+    };
   } catch (e: any) {
     const run = runDataArray.value.find((r) => r.id === selectedRunId.value)
       || { game: 'missingno', category: '' };
@@ -157,7 +165,7 @@ function createCSV(ack: ListenForCb | undefined): void {
   });
 
   if (ack && !ack.handled) {
-    ack(null, Papa.unparse(array));
+    ack(null, Papa.unparse<CSVData>(array));
   }
 }
 
@@ -182,6 +190,7 @@ function syncArrays(runArray: RunData[]): void {
 }
 
 if (config.useEsaLayouts) {
+  console.log('Listening for obs transition');
   nodecg().listenFor('obsChangeScene', layoutsBundle, ({ scene }) => {
     if (scene === config.obs.gameLayout && settings.value.autoTweet) {
       startCountdown();
@@ -195,6 +204,34 @@ nodecg().listenFor('exportCSV', (value, callback) => createCSV(callback));
 nodecg().listenFor('importCSV', (value, callback) => importCSV(value, callback));
 
 runDataArray.on('change', (newVal) => syncArrays(newVal));
+runDataActiveRun.on('change', (newVal) => {
+  let newRunId = '';
+
+  if (newVal) {
+    newRunId = newVal.id;
+  } else {
+    const runs = runDataArray.value;
+
+    if (runs.length) {
+      newRunId = runs[0].id;
+    }
+  }
+
+  if (!config.useEsaLayouts && newRunId !== selectedRunId.value && settings.value.autoTweet) {
+    startCountdown();
+  }
+
+  if (newRunId !== selectedRunId.value) {
+    countdownTimer.value = {
+      cancelTweet: false,
+      countdownActive: false,
+      sendTweet: false,
+      countdown: 0,
+    };
+  }
+
+  selectedRunId.value = newRunId;
+});
 
 selectedRunId.on('change', () => {
   if (countdownTimer.value.countdownActive) {
