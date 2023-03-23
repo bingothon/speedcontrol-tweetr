@@ -54,7 +54,7 @@
         "name": "editTweet",
         "title": "",
         "width": 4,
-        "file": "example.html",
+        "file": "editTweet.html",
         "dialog": true,
         "dialogButtons": [
           {
@@ -79,7 +79,9 @@
   },
   "dependencies": {
     "module-alias": "^2.2.2",
+    "nodecg-types": "^1.9.0",
     "papaparse": "^5.3.2",
+    "speedcontrol-util": "^0.6.1",
     "twitter-api-v2": "^1.12.9"
   },
   "devDependencies": {
@@ -95,7 +97,6 @@
     "eslint-plugin-import": "^2.27.5",
     "eslint-plugin-vue": "^9.9.0",
     "nodecg-cli": "^8.6.0",
-    "nodecg-types": "^1.9.0",
     "nodecg-vue-composable": "^1.1.0",
     "npm-run-all": "^4.1.5",
     "trash-cli": "^5.0.0",

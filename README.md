@@ -1,4 +1,6 @@
 # speedcontrol-tweetr
+If it aint broke, rewrite the shit out of it.
+
 Control Twitter right from your NodeCG dashboard!
 
 [![Release](https://img.shields.io/github/v/release/nicnacnic/speedcontrol-tweetr?label=Release)](https://github.com/nicnacnic/speedcontrol-tweetr/releases)
@@ -13,7 +15,8 @@ Control Twitter right from your NodeCG dashboard!
 speedcontrol-tweetr is a bundle for NodeCG to allow users to schedule and post tweets without actually logging into the website. This bundle is meant for speedrunning marathons, therefore it includes all the features one might need to pull off an online marathon. Gone are the days where you need to use Tweetdeck or manually schedule tweets for your marathon!
 
 ### Modifications
-This version of tweetr is different from [Nic's version](https://github.com/nicnacnic/speedcontrol-tweetr). The main difference is that it is written in typescript and is built on top of zonton's template
+This version of tweetr is different from [Nic's version](https://github.com/nicnacnic/speedcontrol-tweetr). The main difference is that it is written in typescript and is built on top of zonton's template.
+It also has some additional features like tweeting once the transition to the game scene.
 
 ### Features
 - Does not require nodecg-components to be installed

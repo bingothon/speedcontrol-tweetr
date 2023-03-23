@@ -9,10 +9,11 @@ import type { NodeCG } from 'nodecg-types/types/server';
 import { set } from './util/nodecg';
 
 export = (nodecg: NodeCG): void => {
-	/**
-	 * Because of how `import`s work, it helps to use `require`s to force
-	 * things to be loaded *after* the NodeCG context is set.
-	 */
-	set(nodecg);
-	require('./example');
+  /**
+   * Because of how `import`s work, it helps to use `require`s to force
+   * things to be loaded *after* the NodeCG context is set.
+   */
+  set(nodecg);
+  require('./example');
+  require('./tweetrExtension');
 };
