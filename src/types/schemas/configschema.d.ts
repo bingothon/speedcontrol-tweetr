@@ -35,6 +35,7 @@ export type TheAccessTokenSecretSchema = string;
  */
 export interface Configschema {
 	useEsaLayouts: UseTheEsaLayoutsPackageForObsEvents;
+	useDummyTwitterClient: boolean;
 	obs: {
 		gameLayout: string;
 		[k: string]: unknown;

@@ -13,17 +13,18 @@ import { RunData } from 'speedcontrol-util/types';
 import { TwitterApi } from 'twitter-api-v2';
 import { SendTweetV1Params } from 'twitter-api-v2/dist/types';
 import { ListenForCb } from 'nodecg-types/types/lib/nodecg-instance';
+import ITwitterClient from '@tweetr/twitter/ITwitterClient';
+import TwitterApiClient from '@tweetr/twitter/TwitterApiClient';
+import DummyTwitterClient from '@tweetr/twitter/DummyTwitterClient';
+import Papa from 'papaparse';
 
 let buttonTimer: NodeJS.Timer | undefined;
 
 const config = nodecg().bundleConfig as Configschema;
 
-const twitterClient = new TwitterApi({
-  appKey: config.apiKey,
-  appSecret: config.apiSecret,
-  accessToken: config.accessToken,
-  accessSecret: config.accessTokenSecret,
-});
+// TODO: Dummy client
+const twitterClient: ITwitterClient = config.useDummyTwitterClient
+  ? new DummyTwitterClient() : new TwitterApiClient(config);
 
 setTimeout(() => {
   clearInterval(buttonTimer);
@@ -57,7 +58,7 @@ async function sendTweet(): Promise<void> {
     let payloadObj: Partial<SendTweetV1Params> | undefined;
 
     if (data.media && data.media !== 'None') {
-      const mediaId = await twitterClient.v1
+      const mediaId = await twitterClient
         .uploadMedia(`./assets/speedcontrol-tweetr/media/${data.media}`);
 
       payloadObj = {
@@ -65,7 +66,7 @@ async function sendTweet(): Promise<void> {
       };
     }
 
-    await twitterClient.v1.tweet(data.content, payloadObj);
+    await twitterClient.tweet(data.content, payloadObj);
   } catch (e: any) {
     const run = runDataArray.value.find((r) => r.id === selectedRunId.value)
       || { game: 'missingno', category: '' };
@@ -108,12 +109,56 @@ function cancelTweet(): void {
   };
 }
 
-async function importCSV(val: any, cb: ListenForCb | undefined): Promise<void> {
-  //
+type CSVData = {
+  ID: string;
+  Game: string;
+  Category: string;
+  'Runner(s)': string;
+  'Tweet Content': string;
+  Media: string;
+};
+
+async function importCSV(val: any, ack: ListenForCb | undefined): Promise<void> {
+  const { data } = Papa.parse<CSVData>(val);
+
+  // TODO: how is this parsed?
+  console.log(data);
+
+  if (ack && !ack.handled) {
+    ack(null);
+  }
 }
 
-function createCSV(cb: ListenForCb | undefined): void {
-  //
+function createCSV(ack: ListenForCb | undefined): void {
+  const array: CSVData[] = [];
+
+  Object.keys(tweetData.value).forEach((run) => {
+    const runData = runDataArray.value.find((x) => x.id === run);
+    const runners: string[] = [];
+
+    if (!runData) {
+      return;
+    }
+
+    runData.teams.forEach((team) => {
+      team.players.forEach((runner) => {
+        runners.push(runner.name);
+      });
+    });
+
+    array.push({
+      ID: run,
+      Game: runData.game || 'missingno',
+      Category: runData.category || 'unknown%',
+      'Runner(s)': runners.join(', '),
+      'Tweet Content': tweetData.value[run].content,
+      Media: (tweetData.value[run].media === 'None') ? '' : tweetData.value[run].media || '',
+    });
+  });
+
+  if (ack && !ack.handled) {
+    ack(null, Papa.unparse(array));
+  }
 }
 
 function syncArrays(runArray: RunData[]): void {

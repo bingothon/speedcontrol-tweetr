@@ -8,6 +8,7 @@
     "accessToken": "",
     "accessTokenSecret": "",
     "useEsaLayouts": true,
+    "useDummyTwitterClient": false,
     "obs": {
       "gameLayout": "Game Layout"
     }
@@ -29,7 +30,8 @@
     "accessToken",
     "accessTokenSecret",
     "useEsaLayouts",
-    "obs"
+    "obs",
+    "useDummyTwitterClient"
   ],
   "title": "configschema",
   "type": "object",
@@ -44,6 +46,10 @@
         "true",
         "false"
       ]
+    },
+    "useDummyTwitterClient": {
+      "type": "boolean",
+      "default": false
     },
     "obs": {
       "type": "object",
