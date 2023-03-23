@@ -49,7 +49,6 @@ export default defineComponent({
       nodecg.sendMessage('cancelTweet');
     },
     openEditDialog(): void {
-      nodecg.sendMessage('editTweet');
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore bad types
       nodecg.getDialog('editTweet')?.open();
