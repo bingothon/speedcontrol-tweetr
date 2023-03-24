@@ -1,0 +1,19 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"type": "object",
+	"additionalProperties": false,
+	"properties": {
+		"autoTweet": {
+			"type": "boolean",
+			"default": true
+		},
+		"countdown": {
+			"type": "integer",
+			"default": 60
+		}
+	},
+	"required": [
+		"autoTweet",
+		"countdown"
+	]
+}
