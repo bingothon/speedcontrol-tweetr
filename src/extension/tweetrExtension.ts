@@ -1,12 +1,8 @@
 import { get as nodecg } from '@tweetr/util/nodecg';
 import { Configschema, TweetData } from '@tweetr/types/schemas';
 import {
-  countdownTimer, runDataActiveRun,
-  runDataActiveRunSurrounding,
-  runDataArray, runFinishTimes,
-  selectedRunId,
-  settings,
-  tweetData,
+  countdownTimer, runDataActiveRun, runDataActiveRunSurrounding,
+  runDataArray, runFinishTimes, selectedRunId, settings, tweetData,
 } from '@tweetr/util/replicants';
 import { layoutsBundle } from '@tweetr/util/bundles';
 import { RunData } from 'speedcontrol-util/types';
@@ -75,13 +71,14 @@ async function sendTweet(): Promise<void> {
       countdownActive: false,
       sendTweet: true,
     };
-  } catch (e: any) {
+  } catch (e: unknown) {
     const run = runDataArray.value.find((r) => r.id === selectedRunId.value)
       || { game: 'missingno', category: '' };
     nodecg().log.warn(
       `Error posting tweet. Your tweet is either blank, invalid, or a duplicate. Run: ${
         run.game} ${run.category}`,
     );
+    // eslint-disable-next-line no-console
     console.error(e);
   }
 }
@@ -98,8 +95,7 @@ function startCountdown(): void {
   };
 
   buttonTimer = setInterval(() => {
-    // eslint-disable-next-line no-plusplus
-    time--;
+    time -= 1;
     countdownTimer.value.countdown = time;
     if (time <= 0) {
       sendTweet();
@@ -126,11 +122,29 @@ type CSVData = {
   Media: string;
 };
 
-async function importCSV(val: any, ack: ListenForCb | undefined): Promise<void> {
-  const { data } = Papa.parse<CSVData>(val);
+async function importCSV(val: string, ack: ListenForCb | undefined): Promise<void> {
+  const { data } = Papa.parse<string[]>(val);
 
-  // TODO: how is this parsed?
-  console.log(data);
+  // we start at 1 to skip the header row
+  for (let i = 1; i < data.length; i += 1) {
+    const row = data[i];
+
+    // We are missing properties so we skip it
+    if (row.length < 6) {
+      // eslint-disable-next-line no-continue
+      continue;
+    }
+
+    const split = row[5].split('/');
+    const mediaName = split[split.length - 1];
+
+    tweetData.value[row[0]] = {
+      game: row[1],
+      category: row[2],
+      content: row[4], // index 3 is runner names
+      media: mediaName || null,
+    };
+  }
 
   if (ack && !ack.handled) {
     ack(null);
@@ -142,17 +156,14 @@ function createCSV(ack: ListenForCb | undefined): void {
 
   Object.keys(tweetData.value).forEach((run) => {
     const runData = runDataArray.value.find((x) => x.id === run);
-    const runners: string[] = [];
 
     if (!runData) {
       return;
     }
 
-    runData.teams.forEach((team) => {
-      team.players.forEach((runner) => {
-        runners.push(runner.name);
-      });
-    });
+    const runners = runData.teams.flatMap(
+      (team) => team.players.map((r) => r.name),
+    );
 
     array.push({
       ID: run,
@@ -190,7 +201,6 @@ function syncArrays(runArray: RunData[]): void {
 }
 
 if (config.useEsaLayouts) {
-  console.log('Listening for obs transition');
   nodecg().listenFor('obsChangeScene', layoutsBundle, ({ scene }) => {
     if (scene === config.obs.gameLayout && settings.value.autoTweet) {
       startCountdown();

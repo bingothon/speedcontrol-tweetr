@@ -1,6 +1,6 @@
 /* eslint-disable max-len */
 
-import type { CountdownTimer, ExampleReplicant, Settings, TweetData } from '@tweetr/types/schemas';
+import type { CountdownTimer, Settings, TweetData } from '@tweetr/types/schemas';
 import { RunDataActiveRun, RunDataArray, RunFinishTimes } from 'speedcontrol-util/types';
 import { speedcontrolBundle } from '@tweetr/util/bundles';
 import { RunDataActiveRunSurrounding } from 'speedcontrol-util/types/speedcontrol/schemas';
@@ -18,9 +18,6 @@ export const runDataActiveRunSurrounding = nodecg().Replicant<RunDataActiveRunSu
 export const runFinishTimes = nodecg().Replicant<RunFinishTimes>('runFinishTimes', speedcontrolBundle);
 
 // Our replicants
-export const exampleReplicant = nodecg().Replicant<ExampleReplicant>('exampleReplicant', {
-  persistent: false,
-});
 export const tweetData = nodecg().Replicant<TweetData>('tweetData', {
   defaultValue: {},
 });

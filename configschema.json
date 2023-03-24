@@ -2,8 +2,6 @@
   "$id": "http://example.com/example.json",
   "$schema": "http://json-schema.org/draft-07/schema",
   "default": {
-    // TODO: delete?
-    "tweetDelay": 30000,
     "apiKey": "",
     "apiSecret": "",
     "accessToken": "",
@@ -17,7 +15,6 @@
   "description": "The root schema comprises the entire JSON document.",
   "examples": [
     {
-      "tweetDelay": 30000,
       "apiKey": "",
       "apiSecret": "",
       "accessToken": "",
@@ -25,7 +22,6 @@
     }
   ],
   "required": [
-    "tweetDelay",
     "apiKey",
     "apiSecret",
     "accessToken",
@@ -62,16 +58,6 @@
       },
       "required": [
         "gameLayout"
-      ]
-    },
-    "tweetDelay": {
-      "$id": "#/properties/tweetDelay",
-      "type": "integer",
-      "title": "The tweetDelay schema",
-      "description": "An explanation about the purpose of this instance.",
-      "default": 0,
-      "examples": [
-        30000
       ]
     },
     "apiKey": {

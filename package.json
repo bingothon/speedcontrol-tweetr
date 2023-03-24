@@ -71,11 +71,10 @@
         "name": "settings",
         "title": "Tweetr Settings",
         "workspace": "Z - BSG Advanced",
-        "file": "example.html",
+        "file": "settings.html",
         "width": 3
       }
-    ],
-    "graphics": []
+    ]
   },
   "dependencies": {
     "module-alias": "^2.2.2",

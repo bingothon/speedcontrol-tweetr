@@ -12,10 +12,6 @@ export type UseTheEsaLayoutsPackageForObsEvents = boolean;
 /**
  * An explanation about the purpose of this instance.
  */
-export type TheTweetDelaySchema = number;
-/**
- * An explanation about the purpose of this instance.
- */
 export type TheApiKeySchema = string;
 /**
  * An explanation about the purpose of this instance.
@@ -40,7 +36,6 @@ export interface Configschema {
 		gameLayout: string;
 		[k: string]: unknown;
 	};
-	tweetDelay: TheTweetDelaySchema;
 	apiKey: TheApiKeySchema;
 	apiSecret: TheApiSecretSchema;
 	accessToken: TheAccessTokenSchema;
