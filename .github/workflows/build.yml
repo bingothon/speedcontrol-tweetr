@@ -53,7 +53,6 @@ jobs:
         run: |
           git checkout main
           git checkout build
-          git pull
 
       # Attempt to start to merge the main branch into build.
       # This can "error" but we want to continue regardless.
@@ -125,4 +124,5 @@ jobs:
         with:
           github_token: ${{ secrets['GITHUB_TOKEN'] }}
           branch: build
+          force_with_lease: true
           directory: ./nodecg/bundles/speedcontrol-tweetr
