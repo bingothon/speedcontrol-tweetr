@@ -53,6 +53,7 @@ jobs:
         run: |
           git checkout main
           git checkout build
+          git pull
 
       # Attempt to start to merge the main branch into build.
       # This can "error" but we want to continue regardless.
