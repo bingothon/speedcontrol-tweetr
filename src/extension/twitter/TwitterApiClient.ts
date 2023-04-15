@@ -1,5 +1,5 @@
 import { Configschema } from '@tweetr/types/schemas';
-import { SendTweetV1Params } from 'twitter-api-v2/dist/types';
+import { SendTweetV2Params } from 'twitter-api-v2/dist/types';
 import { TwitterApi } from 'twitter-api-v2';
 import ITwitterClient from './ITwitterClient';
 
@@ -15,8 +15,8 @@ export default class TwitterApiClient implements ITwitterClient {
     });
   }
 
-  async tweet(text: string, params: Partial<SendTweetV1Params> | undefined): Promise<void> {
-    await this.twitterApi.v1.tweet(text, params);
+  async tweet(text: string, params: Partial<SendTweetV2Params> | undefined): Promise<void> {
+    await this.twitterApi.v2.tweet(text, params);
   }
 
   async uploadMedia(file: string): Promise<string> {

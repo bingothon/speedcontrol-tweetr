@@ -6,7 +6,7 @@ import {
 } from '@tweetr/util/replicants';
 import { layoutsBundle } from '@tweetr/util/bundles';
 import { RunData } from 'speedcontrol-util/types';
-import { SendTweetV1Params } from 'twitter-api-v2/dist/types';
+import { SendTweetV2Params } from 'twitter-api-v2/dist/types';
 import { ListenForCb } from 'nodecg-types/types/lib/nodecg-instance';
 import ITwitterClient from '@tweetr/twitter/ITwitterClient';
 import TwitterApiClient from '@tweetr/twitter/TwitterApiClient';
@@ -53,14 +53,16 @@ async function sendTweet(): Promise<void> {
   }
 
   try {
-    let payloadObj: Partial<SendTweetV1Params> | undefined;
+    let payloadObj: Partial<SendTweetV2Params> | undefined;
 
     if (data.media && data.media !== 'None') {
       const mediaId = await twitterClient
         .uploadMedia(`./assets/speedcontrol-tweetr/media/${data.media}`);
 
       payloadObj = {
-        media_ids: [mediaId],
+        media: {
+          media_ids: [mediaId],
+        },
       };
     }
 
