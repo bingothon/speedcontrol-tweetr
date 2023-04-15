@@ -28,7 +28,7 @@
     "bundleDependencies": {
       "nodecg-speedcontrol": "^2.4.0"
     },
-    "compatibleRange": "^1.9.0",
+    "compatibleRange": "^1.9||^2",
     "assetCategories": [
       {
         "name": "media",

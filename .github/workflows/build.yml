@@ -33,7 +33,7 @@ jobs:
         uses: actions/checkout@v2
         with:
           token: ${{ secrets['GITHUB_TOKEN'] }}
-          ref: master
+          ref: main
           fetch-depth: 0
           path: ./nodecg/bundles/speedcontrol-tweetr
 
@@ -104,7 +104,7 @@ jobs:
       - name: Commit built files (1)
         working-directory: ./nodecg/bundles/speedcontrol-tweetr
         run: |
-          git add -f dashboard graphics extension
+          git add -f dashboard graphics extension shared
           git commit -m "Built files" -a --allow-empty
 
       # Squash the previous 2 commits down for convenience and create the final build commit.
@@ -124,4 +124,5 @@ jobs:
         with:
           github_token: ${{ secrets['GITHUB_TOKEN'] }}
           branch: build
+          force_with_lease: true
           directory: ./nodecg/bundles/speedcontrol-tweetr
