@@ -239,8 +239,9 @@ nodecg().listenFor('exportCSV', (value, callback) => createCSV(callback));
 nodecg().listenFor('importCSV', (value, callback) => importCSV(value, callback));
 
 runDataArray.on('change', (newVal) => syncArrays(newVal));
-runDataActiveRun.on('change', (newVal) => {
+runDataActiveRun.on('change', (newVal, oldVal) => {
   let newRunId = '';
+  let oldRunId = '';
   
   if (newVal) {
     newRunId = newVal.id;
@@ -252,7 +253,17 @@ runDataActiveRun.on('change', (newVal) => {
     }
   }
   
-  if (!config.useEsaLayouts && newRunId !== selectedRunId.value && settings.value.autoTweet) {
+  if (oldVal) {
+    oldRunId = oldVal.id;
+  } else {
+    const runs = runDataArray.value;
+    
+    if (runs.length) {
+      oldRunId = runs[0].id;
+    }
+  }
+  
+  if (!config.useEsaLayouts && newRunId != oldRunId && settings.value.autoTweet) {
     startCountdown();
   }
   
