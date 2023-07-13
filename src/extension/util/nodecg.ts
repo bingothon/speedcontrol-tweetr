@@ -1,11 +1,12 @@
-import type { NodeCG } from 'nodecg-types/types/server';
+import { Configschema } from '@tweetr/types/schemas';
+import type NodeCGTypes from '@nodecg/types';
 
-let nodecg: NodeCG;
+let nodecg: NodeCGTypes.ServerAPI<Configschema>;
 
-export function set(ctx: NodeCG): void {
-	nodecg = ctx;
+export function set(ctx: NodeCGTypes.ServerAPI<Configschema>): void {
+  nodecg = ctx;
 }
 
-export function get(): NodeCG {
-	return nodecg;
+export function get(): NodeCGTypes.ServerAPI<Configschema> {
+  return nodecg;
 }

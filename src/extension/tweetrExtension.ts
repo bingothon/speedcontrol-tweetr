@@ -1,21 +1,27 @@
 import { get as nodecg } from '@tweetr/util/nodecg';
-import { Configschema, TweetData } from '@tweetr/types/schemas';
+import { TweetData } from '@tweetr/types/schemas';
 import {
-  countdownTimer, runDataActiveRun, runDataActiveRunSurrounding,
-  runDataArray, runFinishTimes, selectedRunId, settings, tweetData,
+  countdownTimer,
+  runDataActiveRun,
+  runDataActiveRunSurrounding,
+  runDataArray,
+  runFinishTimes,
+  selectedRunId,
+  settings,
+  tweetData,
 } from '@tweetr/util/replicants';
 import { layoutsBundle } from '@tweetr/util/bundles';
 import { RunData } from 'speedcontrol-util/types';
 import { SendTweetV2Params } from 'twitter-api-v2/dist/types';
-import { ListenForCb } from 'nodecg-types/types/lib/nodecg-instance';
 import ITwitterClient from '@tweetr/twitter/ITwitterClient';
 import TwitterApiClient from '@tweetr/twitter/TwitterApiClient';
 import DummyTwitterClient from '@tweetr/twitter/DummyTwitterClient';
+import type NodeCGTypes from '@nodecg/types';
 import Papa from 'papaparse';
 
 let buttonTimer: NodeJS.Timer | undefined;
 
-const config = nodecg().bundleConfig as Configschema;
+const config = nodecg().bundleConfig;
 const twitterClient: ITwitterClient = config.useDummyTwitterClient
   ? new DummyTwitterClient() : new TwitterApiClient(config);
 
@@ -124,7 +130,7 @@ type CSVData = {
   Media: string;
 };
 
-async function importCSV(val: string, ack: ListenForCb | undefined): Promise<void> {
+async function importCSV(val: string, ack: NodeCGTypes.Acknowledgement | undefined): Promise<void> {
   const { data } = Papa.parse<string[]>(val);
 
   // we start at 1 to skip the header row
@@ -153,7 +159,7 @@ async function importCSV(val: string, ack: ListenForCb | undefined): Promise<voi
   }
 }
 
-function createCSV(ack: ListenForCb | undefined): void {
+function createCSV(ack: NodeCGTypes.Acknowledgement | undefined): void {
   const array: CSVData[] = [];
 
   Object.keys(tweetData.value).forEach((run) => {
