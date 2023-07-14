@@ -20,7 +20,7 @@ jobs:
         with:
           token: ${{ secrets['GITHUB_TOKEN'] }}
           repository: nodecg/nodecg
-          ref: 'v1.9.0'
+          ref: 'v2.1.11'
           path: ./nodecg-temp
 
       # Copies checked out NodeCG into permanent folder.
@@ -52,7 +52,9 @@ jobs:
         working-directory: ./nodecg/bundles/speedcontrol-tweetr
         run: |
           git checkout main
+          git pull
           git checkout build
+          git pull
 
       # Attempt to start to merge the main branch into build.
       # This can "error" but we want to continue regardless.
