@@ -132,30 +132,42 @@ type CSVData = {
 
 async function importCSV(val: string, ack: NodeCGTypes.Acknowledgement | undefined): Promise<void> {
   const { data } = Papa.parse<string[]>(val);
+  const tmpData: TweetData = {};
 
-  // we start at 1 to skip the header row
-  for (let i = 1; i < data.length; i += 1) {
-    const row = data[i];
+  try {
+    // we start at 1 to skip the header row
+    for (let i = 1; i < data.length; i += 1) {
+      const row = data[i];
 
-    // We are missing properties so we skip it
-    if (row.length < 6) {
-      // eslint-disable-next-line no-continue
-      continue;
+      // We are missing properties so we skip it
+      if (row.length < 6) {
+        // eslint-disable-next-line no-continue
+        continue;
+      }
+
+      const split = row[5].split('/');
+      const mediaName = split[split.length - 1];
+
+      tmpData[row[0]] = {
+        game: row[1],
+        category: row[2],
+        content: row[4], // index 3 is runner names
+        media: mediaName || null,
+      };
     }
 
-    const split = row[5].split('/');
-    const mediaName = split[split.length - 1];
+    tweetData.value = tmpData;
 
-    tweetData.value[row[0]] = {
-      game: row[1],
-      category: row[2],
-      content: row[4], // index 3 is runner names
-      media: mediaName || null,
-    };
-  }
+    if (ack && !ack.handled) {
+      ack(null);
+    }
+  } catch (err: unknown) {
+    // eslint-disable-next-line no-console
+    console.error(err);
 
-  if (ack && !ack.handled) {
-    ack(null);
+    if (ack && !ack.handled) {
+      ack(err);
+    }
   }
 }
 
