@@ -104,8 +104,13 @@ function startCountdown(): void {
 
   buttonTimer = setInterval(() => {
     time -= 1;
-    countdownTimer.value.countdown = time;
+    countdownTimer.value = {
+      ...countdownTimer.value,
+      countdownActive: true,
+      countdown: time,
+    };
     if (time <= 0) {
+      clearInterval(buttonTimer);
       sendTweet();
     }
   }, 1000);
@@ -132,7 +137,9 @@ type CSVData = {
 
 async function importCSV(val: string, ack: NodeCGTypes.Acknowledgement | undefined): Promise<void> {
   const { data } = Papa.parse<string[]>(val);
-  const tmpData: TweetData = {};
+  const tmpData: TweetData = {
+    ...tweetData.value,
+  };
 
   try {
     // we start at 1 to skip the header row
