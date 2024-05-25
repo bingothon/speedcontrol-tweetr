@@ -39,7 +39,7 @@ async function sendTweet(): Promise<void> {
   clearInterval(buttonTimer);
   const data = tweetData.value[selectedRunId.value];
 
-  if (!data.content) {
+  if (!data || !data.content) {
     nodecg().log.warn(`Skipping tweet for "${data.game}, ${data.category}" due to missing content`);
     return;
   }
