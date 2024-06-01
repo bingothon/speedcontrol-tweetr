@@ -155,13 +155,17 @@ async function importCSV(val: string, ack: NodeCGTypes.Acknowledgement | undefin
       const split = row[5].split('/');
       const mediaName = split[split.length - 1];
 
-      tmpData[row[0]] = {
-        game: row[1],
-        category: row[2],
-        content: row[4], // index 3 is runner names
-        media: mediaName || null,
-      };
+      if (row[0]) {
+        tmpData[row[0]] = {
+          game: row[1],
+          category: row[2],
+          content: row[4], // index 3 is runner names
+          media: mediaName || null,
+        };
+      }
     }
+
+    console.log(tmpData);
 
     tweetData.value = tmpData;
 
@@ -223,6 +227,8 @@ function syncArrays(runArray: RunData[]): void {
       updatedData[run.id] = currentData[run.id];
     }
   });
+
+  console.log(updatedData);
 
   tweetData.value = updatedData;
 }
