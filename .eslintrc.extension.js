@@ -32,7 +32,7 @@ module.exports = {
 		semi: ['error', 'always'],
 		'@typescript-eslint/lines-between-class-members': 'off',
 		// max-len set to ignore "import" lines (as they usually get long and messy).
-		'max-len': ['error', { code: 100, ignorePattern: '^import\\s.+\\sfrom\\s.+;' }],
+		'max-len': ['error', { code: 120, ignorePattern: '^import\\s.+\\sfrom\\s.+;' }],
 		// I mainly have this off as it ruins auto import sorting in VSCode.
 		'object-curly-newline': 'off',
 		'import/extensions': ['error', 'ignorePackages', {
@@ -41,6 +41,7 @@ module.exports = {
 			ts: 'never',
 			tsx: 'never',
 		}],
+    'class-methods-use-this': 'off',
 	},
 
 	// Overrides for types.

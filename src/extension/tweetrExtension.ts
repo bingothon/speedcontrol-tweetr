@@ -12,17 +12,16 @@ import {
 } from '@tweetr/util/replicants';
 import { layoutsBundle } from '@tweetr/util/bundles';
 import { RunData } from 'speedcontrol-util/types';
-import { SendTweetV2Params } from 'twitter-api-v2/dist/types';
-import ITwitterClient from '@tweetr/twitter/ITwitterClient';
+import ITwitterClient, { TweetOptions } from '@tweetr/base/ITwitterClient';
 import TwitterApiClient from '@tweetr/twitter/TwitterApiClient';
 import DummyTwitterClient from '@tweetr/twitter/DummyTwitterClient';
 import type NodeCGTypes from '@nodecg/types';
 import Papa from 'papaparse';
 
-let buttonTimer: NodeJS.Timer | undefined;
+let buttonTimer: NodeJS.Timeout | undefined;
 
 const config = nodecg().bundleConfig;
-const twitterClient: ITwitterClient = config.useDummyTwitterClient
+const twitterClient: ITwitterClient<string> = config.useDummyTwitterClient
   ? new DummyTwitterClient() : new TwitterApiClient(config);
 
 setTimeout(() => {
@@ -34,6 +33,10 @@ setTimeout(() => {
     countdown: -1,
   };
 }, 1000);
+
+function getMediaPath(mediaName: string): string {
+  return `${mediaName}`;
+}
 
 async function sendTweet(): Promise<void> {
   clearInterval(buttonTimer);
@@ -59,20 +62,18 @@ async function sendTweet(): Promise<void> {
   }
 
   try {
-    let payloadObj: Partial<SendTweetV2Params> | undefined;
+    let twitterImageData: TweetOptions<string> | undefined;
 
     if (data.media && data.media !== 'None') {
       const mediaId = await twitterClient
         .uploadMedia(`./assets/speedcontrol-tweetr/media/${data.media}`);
 
-      payloadObj = {
-        media: {
-          media_ids: [mediaId],
-        },
+      twitterImageData = {
+        imageData: mediaId,
       };
     }
 
-    await twitterClient.tweet(data.content, payloadObj);
+    await twitterClient.tweet(data.content, twitterImageData);
 
     countdownTimer.value = {
       ...countdownTimer.value,
@@ -165,7 +166,7 @@ async function importCSV(val: string, ack: NodeCGTypes.Acknowledgement | undefin
       }
     }
 
-    console.log(tmpData);
+    nodecg().log.debug('Imported csv data', tmpData);
 
     tweetData.value = tmpData;
 
@@ -228,7 +229,7 @@ function syncArrays(runArray: RunData[]): void {
     }
   });
 
-  console.log(updatedData);
+  nodecg().log.debug('Arrays synced', updatedData);
 
   tweetData.value = updatedData;
 }

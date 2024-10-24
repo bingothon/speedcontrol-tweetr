@@ -10,6 +10,10 @@
     "useDummyTwitterClient": false,
     "obs": {
       "gameLayout": "Game Layout"
+    },
+    "bluesky": {
+      "identifier": "bsgmarathon.com",
+      "password": ""
     }
   },
   "description": "The root schema comprises the entire JSON document.",
@@ -28,6 +32,7 @@
     "accessTokenSecret",
     "useEsaLayouts",
     "obs",
+    "bluesky",
     "useDummyTwitterClient"
   ],
   "title": "configschema",
@@ -47,6 +52,21 @@
     "useDummyTwitterClient": {
       "type": "boolean",
       "default": false
+    },
+    "bluesky": {
+      "type": "object",
+      "properties": {
+        "identifier": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "identifier",
+        "password"
+      ]
     },
     "obs": {
       "type": "object",

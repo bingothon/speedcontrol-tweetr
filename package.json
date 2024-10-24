@@ -78,6 +78,7 @@
     ]
   },
   "dependencies": {
+    "axios": "^1.7.7",
     "module-alias": "^2.2.2",
     "papaparse": "^5.3.2",
     "speedcontrol-util": "github:speedcontrol/speedcontrol-util.git#build",

@@ -1,11 +1,8 @@
-/* eslint-disable class-methods-use-this */
-
 import { get as nodecg } from '@tweetr/util/nodecg';
-import { SendTweetV2Params } from 'twitter-api-v2/dist/types';
-import ITwitterClient from './ITwitterClient';
+import ITwitterClient, { TweetOptions } from '@tweetr/base/ITwitterClient';
 
-export default class DummyTwitterClient implements ITwitterClient {
-  async tweet(text: string, params: Partial<SendTweetV2Params> | undefined): Promise<void> {
+export default class DummyTwitterClient implements ITwitterClient<string> {
+  async tweet(text: string, params: TweetOptions<string> | undefined): Promise<void> {
     nodecg().log.info(`Dummy tweet: ${text}`);
   }
 
