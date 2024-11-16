@@ -38,7 +38,7 @@ setTimeout(() => {
 }, 1000);
 
 function getMediaPath(mediaName: string): string {
-  return `${mediaName}`;
+  return `./assets/speedcontrol-tweetr/media/${mediaName}`;
 }
 
 async function sendTweet(): Promise<void> {
