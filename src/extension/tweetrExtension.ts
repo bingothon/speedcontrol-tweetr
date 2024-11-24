@@ -18,14 +18,14 @@ import DummyTwitterClient from '@tweetr/twitter/DummyTwitterClient';
 import type NodeCGTypes from '@nodecg/types';
 import Papa from 'papaparse';
 import BlueskyApiClient from '@tweetr/bluesky/BlueskyApiClient';
-import { BlueskyImageData } from '@tweetr/bluesky/types';
+import { MediaData as BussyPics } from '@tweetr/bluesky/types';
 
 let buttonTimer: NodeJS.Timeout | undefined;
 
 const config = nodecg().bundleConfig;
 const twitterClient: ITwitterClient<string> = config.useDummyTwitterClient
   ? new DummyTwitterClient() : new TwitterApiClient(config);
-const blueskyClient: ITwitterClient<BlueskyImageData> = config.useDummyTwitterClient
+const blueskyClient: ITwitterClient<BussyPics> = config.useDummyTwitterClient
   ? new DummyTwitterClient() : new BlueskyApiClient(config);
 
 setTimeout(() => {
@@ -67,13 +67,12 @@ async function sendTweet(): Promise<void> {
 
   try {
     let twitterImageData: TweetOptions<string> | undefined;
-    let bussyImageData: TweetOptions<BlueskyImageData> | undefined;
+    let bussyImageData: TweetOptions<BussyPics> | undefined;
 
     if (data.media && data.media !== 'None') {
       const mediaPath = getMediaPath(data.media);
-      const mediaId = await twitterClient
-        .uploadMedia(mediaPath);
       const blueskyImageData = await blueskyClient.uploadMedia(mediaPath);
+      const mediaId = await twitterClient.uploadMedia(mediaPath);
 
       twitterImageData = {
         imageData: mediaId,
@@ -83,8 +82,10 @@ async function sendTweet(): Promise<void> {
       };
     }
 
-    await blueskyClient.tweet(data.content, bussyImageData);
-    await twitterClient.tweet(data.content, twitterImageData);
+    const content = `Automated production test: ${Date.now()}, please ignore.\n${data.content}`;
+
+    await blueskyClient.tweet(content, bussyImageData);
+    await twitterClient.tweet(content, twitterImageData);
 
     countdownTimer.value = {
       ...countdownTimer.value,

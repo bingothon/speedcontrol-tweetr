@@ -15,12 +15,19 @@ export interface BlueskyUpdateResult {
   };
 }
 
+export type MediaData = BlueskyImageData | BlueskyVideoData;
+
 export interface BlueskyImageData {
   $type: 'app.bsky.embed.images';
   images: {
     alt: string;
     image: BlueskyUpdateResult['blob'];
   }[];
+}
+
+export interface BlueskyVideoData {
+  $type: 'app.bsky.embed.video';
+  video: BlueskyUpdateResult['blob'];
 }
 
 export interface BlueskySpanData {

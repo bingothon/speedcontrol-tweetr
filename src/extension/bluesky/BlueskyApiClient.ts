@@ -6,16 +6,16 @@ import { get as nodecg } from '@tweetr/util/nodecg';
 import {
   BlueskyFacetData,
   BlueskyHashtagData,
-  BlueskyImageData,
   BlueskyMentionData,
   BlueskySession,
   BlueskyUpdateResult,
   BlueskyUrlData,
+  MediaData,
 } from '@tweetr/bluesky/types';
 import { hashtagRegex, IMAGE_MAX_SIZE, mentionRegex, urlRegex, VIDEO_MAX_SIZE } from '@tweetr/bluesky/constants';
 import utf8 from 'utf8';
 
-export default class BlueskyApiClient implements ITwitterClient<BlueskyImageData> {
+export default class BlueskyApiClient implements ITwitterClient<MediaData> {
   private bussyClient = axios.create({
     baseURL: 'https://bsky.social',
     headers: {
@@ -43,7 +43,7 @@ export default class BlueskyApiClient implements ITwitterClient<BlueskyImageData
     });
   }
 
-  async tweet(text: string, params: TweetOptions<BlueskyImageData> | undefined): Promise<void> {
+  async tweet(text: string, params: TweetOptions<MediaData> | undefined): Promise<void> {
     if (this.session === null) {
       this.session = await this.login();
     }
@@ -72,13 +72,14 @@ export default class BlueskyApiClient implements ITwitterClient<BlueskyImageData
     nodecg().log.debug('Post create response', data);
   }
 
-  async uploadMedia(file: string): Promise<BlueskyImageData> {
+  async uploadMedia(file: string): Promise<MediaData> {
     const fileStat = await stat(file);
     const contentType = this.guessContentType(file);
+    const fileType = contentType.split('/')[0];
 
-    if (contentType.startsWith('image') && fileStat.size > IMAGE_MAX_SIZE) {
+    if (fileType === 'image' && fileStat.size > IMAGE_MAX_SIZE) {
       throw new Error(`Image too large :), got ${fileStat.size} bytes, ${IMAGE_MAX_SIZE} bytes maximum.`);
-    } else if (contentType.startsWith('video') && fileStat.size > VIDEO_MAX_SIZE) {
+    } else if (fileType === 'video' && fileStat.size > VIDEO_MAX_SIZE) {
       throw new Error(`Video too large :), got ${fileStat.size} bytes, ${VIDEO_MAX_SIZE} bytes maximum.`);
     }
 
@@ -101,6 +102,18 @@ export default class BlueskyApiClient implements ITwitterClient<BlueskyImageData
 
     nodecg().log.debug('Image upload response', data);
 
+    // So turns out this does not work???
+    // Keep getting "Video not found"
+    // 11/10 platform
+    // Documentation: https://github.com/bluesky-social/atproto/blob/main/lexicons/app/bsky/feed/post.json#L30
+    // Yeah good luck
+    if (fileType === 'video') {
+      return {
+        $type: 'app.bsky.embed.video',
+        video: data.blob,
+      };
+    }
+
     return {
       $type: 'app.bsky.embed.images',
       images: [
@@ -121,7 +134,7 @@ export default class BlueskyApiClient implements ITwitterClient<BlueskyImageData
   }
 
   private guessContentType(fileName: string): string {
-    const ext = fileName.split('.')[1];
+    const ext = fileName.split('.')[2];
 
     switch (ext) {
       case 'png':
