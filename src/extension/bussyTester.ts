@@ -18,7 +18,15 @@ const client = new BlueskyApiClient({
   useEsaLayouts: false,
 });
 
-client.uploadMedia('/home/duncte123/Downloads/riek face.jpg')
-  .then((imageData) => {
-    client.tweet('AAAAAAAA', { imageData }).then((data) => console.log(data));
+// client.uploadMedia('/home/duncte123/Downloads/riek face.jpg')
+//   .then((imageData) => {
+//     client.tweet('AAAAAAAA', { imageData }).then((data) => console.log(data));
+//   });
+
+client.parseFacets(
+  'Hello @world.bsky.app, I like @im.going-g.host!! cheese :) '
+  + 'prefix https://example.com/index.html http://bsky.app suffix This is a #test tweet #bluesky',
+)
+  .then((facets) => {
+    console.log(JSON.stringify(facets, null, 2));
   });

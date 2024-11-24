@@ -17,7 +17,8 @@ import TwitterApiClient from '@tweetr/twitter/TwitterApiClient';
 import DummyTwitterClient from '@tweetr/twitter/DummyTwitterClient';
 import type NodeCGTypes from '@nodecg/types';
 import Papa from 'papaparse';
-import BlueskyApiClient, { BlueskyImageData } from '@tweetr/bluesky/BlueskyApiClient';
+import BlueskyApiClient from '@tweetr/bluesky/BlueskyApiClient';
+import { BlueskyImageData } from '@tweetr/bluesky/types';
 
 let buttonTimer: NodeJS.Timeout | undefined;
 

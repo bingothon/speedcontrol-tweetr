@@ -82,13 +82,15 @@
     "module-alias": "^2.2.2",
     "papaparse": "^5.3.2",
     "speedcontrol-util": "github:speedcontrol/speedcontrol-util.git#build",
-    "twitter-api-v2": "^1.12.9"
+    "twitter-api-v2": "^1.12.9",
+    "utf8": "^3.0.0"
   },
   "devDependencies": {
     "@mdi/font": "^7.2.96",
     "@nodecg/types": "^2.1.11",
     "@types/node": "^18.14.6",
     "@types/papaparse": "^5.3.7",
+    "@types/utf8": "^3.0.3",
     "@typescript-eslint/eslint-plugin": "^5.54.0",
     "@typescript-eslint/parser": "^5.54.0",
     "@vitejs/plugin-vue": "^4.0.0",
