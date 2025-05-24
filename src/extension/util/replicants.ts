@@ -3,7 +3,7 @@
 import type { CountdownTimer, Settings, TweetData } from '@tweetr/types/schemas';
 import { RunDataActiveRun, RunDataArray, RunFinishTimes } from 'speedcontrol-util/types';
 import { speedcontrolBundle } from '@tweetr/util/bundles';
-import { RunDataActiveRunSurrounding } from 'speedcontrol-util/types/schemas';
+import { RunDataActiveRunSurrounding } from 'speedcontrol-util/types/speedcontrol/schemas';
 import type NodeCGTypes from '@nodecg/types';
 import { get as nodecg } from './nodecg';
 

@@ -23,8 +23,7 @@ import { MediaData as BussyPics } from '@tweetr/bluesky/types';
 let buttonTimer: NodeJS.Timeout | undefined;
 
 const config = nodecg().bundleConfig;
-const twitterClient: ITwitterClient<string> = config.useDummyTwitterClient
-  ? new DummyTwitterClient() : new TwitterApiClient(config);
+const twitterClient: ITwitterClient<string> = new DummyTwitterClient();
 const blueskyClient: ITwitterClient<BussyPics> = config.useDummyTwitterClient
   ? new DummyTwitterClient() : new BlueskyApiClient(config);
 
@@ -86,7 +85,7 @@ async function sendTweet(): Promise<void> {
     const { content } = data;
 
     await blueskyClient.tweet(content, bussyImageData);
-    await twitterClient.tweet(content, twitterImageData);
+    // await twitterClient.tweet(content, twitterImageData);
 
     countdownTimer.value = {
       ...countdownTimer.value,
