@@ -1,23 +1,32 @@
-import {get as nodecg} from '@tweetr/util/nodecg';
-import {Configschema, TweetData} from '@tweetr/types/schemas';
+import { get as nodecg } from '@tweetr/util/nodecg';
+import { TweetData } from '@tweetr/types/schemas';
 import {
-  countdownTimer, runDataActiveRun, runDataActiveRunSurrounding,
-  runDataArray, runFinishTimes, selectedRunId, settings, tweetData,
+  countdownTimer,
+  runDataActiveRun,
+  runDataActiveRunSurrounding,
+  runDataArray,
+  runFinishTimes,
+  selectedRunId,
+  settings,
+  tweetData,
 } from '@tweetr/util/replicants';
-import {layoutsBundle} from '@tweetr/util/bundles';
-import {RunData} from 'speedcontrol-util/types';
-import {SendTweetV2Params} from 'twitter-api-v2/dist/types';
-import {ListenForCb} from 'nodecg-types/types/lib/nodecg-instance';
-import ITwitterClient from '@tweetr/twitter/ITwitterClient';
+import { layoutsBundle } from '@tweetr/util/bundles';
+import { RunData } from 'speedcontrol-util/types';
+import ITwitterClient, { TweetOptions } from '@tweetr/base/ITwitterClient';
 import TwitterApiClient from '@tweetr/twitter/TwitterApiClient';
 import DummyTwitterClient from '@tweetr/twitter/DummyTwitterClient';
+import type NodeCGTypes from '@nodecg/types';
 import Papa from 'papaparse';
+import BlueskyApiClient from '@tweetr/bluesky/BlueskyApiClient';
+import { MediaData as BussyPics } from '@tweetr/bluesky/types';
 
-let buttonTimer: NodeJS.Timer | undefined;
+let buttonTimer: NodeJS.Timeout | undefined;
 
-const config = nodecg().bundleConfig as Configschema;
-const twitterClient: ITwitterClient = config.useDummyTwitterClient
+const config = nodecg().bundleConfig;
+const twitterClient: ITwitterClient<string> = config.useDummyTwitterClient
   ? new DummyTwitterClient() : new TwitterApiClient(config);
+const blueskyClient: ITwitterClient<BussyPics> = config.useDummyTwitterClient
+  ? new DummyTwitterClient() : new BlueskyApiClient(config);
 
 setTimeout(() => {
   clearInterval(buttonTimer);
@@ -29,18 +38,22 @@ setTimeout(() => {
   };
 }, 1000);
 
+function getMediaPath(mediaName: string): string {
+  return `./assets/speedcontrol-tweetr/media/${mediaName}`;
+}
+
 async function sendTweet(): Promise<void> {
   clearInterval(buttonTimer);
   const data = tweetData.value[selectedRunId.value];
-  
-  if (!data.content) {
+
+  if (!data || !data.content) {
     nodecg().log.warn(`Skipping tweet for "${data.game}, ${data.category}" due to missing content`);
     return;
   }
-  
+
   if (data.content.includes('!lastRunTime')) {
     const prev = runDataActiveRunSurrounding.value.previous;
-    
+
     if (prev) {
       try {
         data.content = data.content.replace('!lastRunTime', runFinishTimes.value[prev].time);
@@ -53,21 +66,28 @@ async function sendTweet(): Promise<void> {
   }
   
   try {
-    let payloadObj: Partial<SendTweetV2Params> | undefined;
-    
+    let twitterImageData: TweetOptions<string> | undefined;
+    let bussyImageData: TweetOptions<BussyPics> | undefined;
+
     if (data.media && data.media !== 'None') {
-      const mediaId = await twitterClient
-        .uploadMedia(`./assets/speedcontrol-tweetr/media/${data.media}`);
-      
-      payloadObj = {
-        media: {
-          media_ids: [mediaId],
-        },
+      const mediaPath = getMediaPath(data.media);
+      const blueskyImageData = await blueskyClient.uploadMedia(mediaPath);
+      const mediaId = await twitterClient.uploadMedia(mediaPath);
+
+      twitterImageData = {
+        imageData: mediaId,
+      };
+      bussyImageData = {
+        imageData: blueskyImageData,
       };
     }
-    
-    await twitterClient.tweet(data.content, payloadObj);
-    
+
+    // const content = `Automated production test: ${Date.now()}, please ignore.\n${data.content}`;
+    const { content } = data;
+
+    await blueskyClient.tweet(content, bussyImageData);
+    await twitterClient.tweet(content, twitterImageData);
+
     countdownTimer.value = {
       ...countdownTimer.value,
       countdownActive: false,
@@ -75,7 +95,7 @@ async function sendTweet(): Promise<void> {
     };
   } catch (e: unknown) {
     const run = runDataArray.value.find((r) => r.id === selectedRunId.value)
-      || {game: 'missingno', category: ''};
+      || { game: 'missingno', category: '' };
     nodecg().log.warn(
       `Error posting tweet. Your tweet is either blank, invalid, or a duplicate. Run: ${
         run.game} ${run.category}`,
@@ -87,7 +107,7 @@ async function sendTweet(): Promise<void> {
 
 function startCountdown(): void {
   clearInterval(buttonTimer);
-  
+
   let time = settings.value.countdown;
   countdownTimer.value = {
     countdownActive: true,
@@ -95,11 +115,16 @@ function startCountdown(): void {
     sendTweet: false,
     countdown: time,
   };
-  
+
   buttonTimer = setInterval(() => {
     time -= 1;
-    countdownTimer.value.countdown = time;
+    countdownTimer.value = {
+      ...countdownTimer.value,
+      countdownActive: true,
+      countdown: time,
+    };
     if (time <= 0) {
+      clearInterval(buttonTimer);
       sendTweet();
     }
   }, 1000);
@@ -125,7 +150,7 @@ type CSVData = {
   [k: string]: unknown;
 };
 
-async function importCSV(val: string, ack: ListenForCb | undefined): Promise<void> {
+async function importCSV(val: string, ack: NodeCGTypes.Acknowledgement | undefined): Promise<void> {
   const {data} = Papa.parse<string[]>(val);
   let headers: string[];
   
@@ -176,20 +201,20 @@ async function importCSV(val: string, ack: ListenForCb | undefined): Promise<voi
   }
 }
 
-function createCSV(ack: ListenForCb | undefined): void {
+function createCSV(ack: NodeCGTypes.Acknowledgement | undefined): void {
   const array: CSVData[] = [];
-  
+
   Object.keys(tweetData.value).forEach((run) => {
     const runData = runDataArray.value.find((x) => x.id === run);
-    
+
     if (!runData) {
       return;
     }
-    
+
     const runners = runData.teams.flatMap(
       (team) => team.players.map((r) => r.name),
     );
-    
+
     array.push({
       ID: run,
       Run: runData.game || 'missingno',
@@ -199,7 +224,7 @@ function createCSV(ack: ListenForCb | undefined): void {
       MediaFilename: (tweetData.value[run].media === 'None') ? '' : tweetData.value[run].media || '',
     });
   });
-  
+
   if (ack && !ack.handled) {
     ack(null, Papa.unparse<CSVData>(array));
   }
@@ -208,7 +233,7 @@ function createCSV(ack: ListenForCb | undefined): void {
 function syncArrays(runArray: RunData[]): void {
   const currentData = tweetData.value;
   const updatedData: TweetData = {};
-  
+
   runArray.forEach((run) => {
     if (currentData[run.id] === undefined) {
       updatedData[run.id] = {
@@ -221,7 +246,9 @@ function syncArrays(runArray: RunData[]): void {
       updatedData[run.id] = currentData[run.id];
     }
   });
-  
+
+  nodecg().log.debug('Arrays synced', updatedData);
+
   tweetData.value = updatedData;
 }
 
@@ -247,7 +274,7 @@ runDataActiveRun.on('change', (newVal, oldVal) => {
     newRunId = newVal.id;
   } else {
     const runs = runDataArray.value;
-    
+
     if (runs.length) {
       newRunId = runs[0].id;
     }
@@ -266,7 +293,7 @@ runDataActiveRun.on('change', (newVal, oldVal) => {
   if (!config.useEsaLayouts && newRunId != oldRunId && settings.value.autoTweet) {
     startCountdown();
   }
-  
+
   if (newRunId !== selectedRunId.value) {
     countdownTimer.value = {
       cancelTweet: false,
@@ -275,7 +302,7 @@ runDataActiveRun.on('change', (newVal, oldVal) => {
       countdown: 0,
     };
   }
-  
+
   selectedRunId.value = newRunId;
 });
 

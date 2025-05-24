@@ -1,9 +1,8 @@
 import { Configschema } from '@tweetr/types/schemas';
-import { SendTweetV2Params } from 'twitter-api-v2/dist/types';
-import { TwitterApi } from 'twitter-api-v2';
-import ITwitterClient from './ITwitterClient';
+import { SendTweetV2Params, TwitterApi } from 'twitter-api-v2';
+import ITwitterClient, { TweetOptions } from '@tweetr/base/ITwitterClient';
 
-export default class TwitterApiClient implements ITwitterClient {
+export default class TwitterApiClient implements ITwitterClient<string> {
   private twitterApi: TwitterApi;
 
   constructor(config: Configschema) {
@@ -15,8 +14,16 @@ export default class TwitterApiClient implements ITwitterClient {
     });
   }
 
-  async tweet(text: string, params: Partial<SendTweetV2Params> | undefined): Promise<void> {
-    await this.twitterApi.v2.tweet(text, params);
+  async tweet(text: string, params: TweetOptions<string> | undefined): Promise<void> {
+    const mediaData: SendTweetV2Params | undefined = params ? {
+      media: {
+        media_ids: [
+          params.imageData,
+        ],
+      },
+    } : undefined;
+
+    await this.twitterApi.v2.tweet(text, mediaData);
   }
 
   async uploadMedia(file: string): Promise<string> {

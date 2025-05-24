@@ -76,7 +76,7 @@ export default defineComponent({
     async exportCSV(): Promise<void> {
       this.exportLoading = true;
 
-      const result = await nodecg.sendMessage('exportCSV');
+      const result = (await nodecg.sendMessage('exportCSV')) as string;
       const element = document.createElement('a');
 
       element.setAttribute('href', `data:text/csv;charset=utf-8,${encodeURIComponent(result)}`);

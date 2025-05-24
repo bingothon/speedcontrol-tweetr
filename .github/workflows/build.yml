@@ -20,7 +20,7 @@ jobs:
         with:
           token: ${{ secrets['GITHUB_TOKEN'] }}
           repository: nodecg/nodecg
-          ref: 'v1.9.0'
+          ref: 'v2.1.11'
           path: ./nodecg-temp
 
       # Copies checked out NodeCG into permanent folder.
@@ -52,7 +52,9 @@ jobs:
         working-directory: ./nodecg/bundles/speedcontrol-tweetr
         run: |
           git checkout main
+          git pull
           git checkout build
+          git pull
 
       # Attempt to start to merge the main branch into build.
       # This can "error" but we want to continue regardless.
@@ -68,7 +70,7 @@ jobs:
       - name: Node.js setup
         uses: actions/setup-node@v2
         with:
-          node-version: '16'
+          node-version: '20'
 
       # Set NPM cache options
       - name: Set NPM cache
@@ -104,7 +106,7 @@ jobs:
       - name: Commit built files (1)
         working-directory: ./nodecg/bundles/speedcontrol-tweetr
         run: |
-          git add -f dashboard graphics extension shared
+          git add -f dashboard extension shared
           git commit -m "Built files" -a --allow-empty
 
       # Squash the previous 2 commits down for convenience and create the final build commit.

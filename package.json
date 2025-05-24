@@ -14,6 +14,7 @@
     "build": "run-s clean build:* && trash graphics",
     "build:browser": "vite build",
     "build:extension": "tsc -b tsconfig.extension.json",
+    "postbuild": "rm -rf graphics || 0",
     "clean": "trash node_modules/.cache && trash shared/dist && trash dashboard && trash graphics && trash extension",
     "lint": "run-s lint:*",
     "lint:browser": "eslint --ext .ts,.vue src/dashboard && eslint --ext .ts,.vue src/graphics",
@@ -38,8 +39,7 @@
           "jpg",
           "gif",
           "jpeg",
-          "webp",
-          "mp4"
+          "webp"
         ]
       }
     ],
@@ -78,16 +78,19 @@
     ]
   },
   "dependencies": {
+    "axios": "^1.7.7",
     "module-alias": "^2.2.2",
-    "nodecg-types": "^1.9.0",
     "papaparse": "^5.3.2",
-    "speedcontrol-util": "^0.6.1",
-    "twitter-api-v2": "^1.12.9"
+    "speedcontrol-util": "github:speedcontrol/speedcontrol-util.git#build",
+    "twitter-api-v2": "^1.12.9",
+    "utf8": "^3.0.0"
   },
   "devDependencies": {
     "@mdi/font": "^7.2.96",
+    "@nodecg/types": "^2.1.11",
     "@types/node": "^18.14.6",
     "@types/papaparse": "^5.3.7",
+    "@types/utf8": "^3.0.3",
     "@typescript-eslint/eslint-plugin": "^5.54.0",
     "@typescript-eslint/parser": "^5.54.0",
     "@vitejs/plugin-vue": "^4.0.0",
