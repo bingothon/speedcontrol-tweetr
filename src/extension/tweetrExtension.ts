@@ -13,7 +13,6 @@ import {
 import { layoutsBundle } from '@tweetr/util/bundles';
 import { RunData } from 'speedcontrol-util/types';
 import ITwitterClient, { TweetOptions } from '@tweetr/base/ITwitterClient';
-import TwitterApiClient from '@tweetr/twitter/TwitterApiClient';
 import DummyTwitterClient from '@tweetr/twitter/DummyTwitterClient';
 import type NodeCGTypes from '@nodecg/types';
 import Papa from 'papaparse';
@@ -144,7 +143,7 @@ type CSVData = {
   Run: string;
   Category: string;
   Runners: string;
-  Tweet: string;
+  Post: string;
   MediaFilename: string;
   [k: string]: unknown;
 };
@@ -164,13 +163,15 @@ async function importCSV(val: string, ack: NodeCGTypes.Acknowledgement | undefin
         Run: '',
         Category: '',
         Runners: '',
-        Tweet: '',
+        Post: '',
         MediaFilename: ''
       };
       
       row.forEach((value, index) => {
-        record[headers[index]] = value;
+        record[headers[index]] = value.trim();
       });
+      
+      record.ID = runDataArray.value.find((run) => run.game === record.Run && run.category === record.Category)?.id || '';
       
       csvData.push(record);
     }
@@ -180,8 +181,9 @@ async function importCSV(val: string, ack: NodeCGTypes.Acknowledgement | undefin
     const row = csvData[i];
     
     // We are missing properties so we skip it
-    if (Object.keys(row).length < 5) {
+    if (Object.keys(row).length < 5 || !row.ID) {
       // eslint-disable-next-line no-continue
+      console.error(`Cannot import Tweet for ${row.Run} - ${row.Category}. Please check if run and category are named correctly in SC and the CSV!`)
       continue;
     }
     
@@ -190,7 +192,7 @@ async function importCSV(val: string, ack: NodeCGTypes.Acknowledgement | undefin
     tweetData.value[row.ID] = {
       game: row.Run,
       category: row.Category,
-      content: row.Tweet, // index 3 is runner names
+      content: row.Post,
       media: row.MediaFilename || null,
     };
   }
@@ -219,7 +221,7 @@ function createCSV(ack: NodeCGTypes.Acknowledgement | undefined): void {
       Run: runData.game || 'missingno',
       Category: runData.category || 'unknown%',
       Runners: runners.join(', '),
-      Tweet: tweetData.value[run].content,
+      Post: tweetData.value[run].content,
       MediaFilename: (tweetData.value[run].media === 'None') ? '' : tweetData.value[run].media || '',
     });
   });
